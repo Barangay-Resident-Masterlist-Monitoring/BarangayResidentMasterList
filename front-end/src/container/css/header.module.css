@@ -1,0 +1,53 @@
+.sidebarToggleBtn {
+  font-size: 1.25rem;
+  border: none;
+  background: transparent;
+  color: white;
+}
+
+.sidebarToggleBtn:hover {
+  color: #ddd;
+}
+
+
+.brandText {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  color: #0c4b8e;
+  letter-spacing: 1px;
+  text-shadow: 0 0 3px rgba(0, 100, 200, 0.1);
+}
+
+.customToggler {
+  border: none;
+}
+
+.customTogglerIcon {
+  filter: invert(0%);
+}
+
+.neonButton {
+  font-weight: 500;
+  color: #333 !important;
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.neonButton:hover {
+  background: rgba(0, 132, 255, 0.1);
+  box-shadow: 0 0 5px rgba(0, 132, 255, 0.4);
+  color: #007bff !important;
+}
+
+.logout {
+  color: #c0392b !important;
+  border-color: rgba(192, 57, 43, 0.3);
+}
+
+.logout:hover {
+  background: rgba(192, 57, 43, 0.05);
+  box-shadow: 0 0 8px rgba(192, 57, 43, 0.3);
+}
