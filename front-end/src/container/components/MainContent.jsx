@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import MainContentCSS from "../css/MainContent.module.css";
+import MainContentCSS from "../css/maincontent.module.css";
 
-const mainContent = () => {
+const MainContent = () => {
   return (
     <main className={MainContentCSS}>
       <Outlet />
@@ -9,4 +9,4 @@ const mainContent = () => {
   );
 };
 
-export default mainContent;
+export default MainContent;
