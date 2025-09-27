@@ -1,19 +1,14 @@
-import React, { useState } from 'react';
+
 import Header from '../components/Header';
 import MainContent from '../components/MainContent';
 import SideBar from '../components/SideBar';
 
-const Main = () => {
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarVisible(prev => !prev);
-  };
-
+const main = () => {
+ 
   return (
-    <div style={{ display: 'flex' }}>
-      <Header onToggleSidebar={toggleSidebar} />
-      <SideBar isVisible={sidebarVisible} />
+    <div>
+      <Header  />
+      <SideBar />
       <MainContent />
     </div>
   );
