@@ -7,36 +7,31 @@ import Secretary from "../secretary/main.jsx";
 
 
 
-import SecretaryLogin from "../secretary/login.jsx";
 import ResidentLogin from "../resident/login.jsx";
+import SecretaryLogin from "../secretary/login.jsx";
 
 import SecretaryDashboard from "../secretary/dashboard.jsx";
 import ResidentDashboard from "../resident/dashboard.jsx";
 
-import SAMPLELANG from "../resident/main.jsx";
 
 const PageRouter = () => {
   return (
       <Router>
         <Routes>
-          <Route path="resident/login" element={< ResidentLogin/>} />
-          <Route path="secretary/login" element={< SecretaryLogin/>} />
-             
-
-           /*-- -- -- -- temporary langsss -- -- -- --*/
-          <Route path="/" element={<SAMPLELANG/>} /> 
-          {/* <Route path="/" element={<Navigate to="/resident/login" />} /> */}
+          <Route path="/*" element={<Navigate to="/resident/login" />} />
+          <Route path="/resident/login" element={<ResidentLogin/>} /> 
+          <Route path="/secretary/login" element={<SecretaryLogin/>} />
 
           <Route 
             exact path="/resident"
             element={ <Resident /> }>
-                <Route path="dashboard" element={<ResidentDashboard type="resident" />} />
+                <Route path="dashboard" element={<ResidentDashboard />} />
             </Route>
 
           <Route 
            exact path="/secretary"
             element={<Secretary />}>
-                <Route path="dashboard" element={<SecretaryDashboard type="secretary" />} />
+                <Route path="dashboard" element={<SecretaryDashboard />} />
             </Route>
         </Routes>
       </Router>

@@ -1,8 +1,9 @@
 import React from 'react'
+import Login from "../components/login"
 
 const login = () => {
   return (
-    <div>resident's login</div>
+    <Login currentUserType='Resident' />
   )
 }
 

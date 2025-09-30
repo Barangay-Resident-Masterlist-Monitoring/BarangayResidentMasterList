@@ -1,0 +1,22 @@
+.bg::before {
+    content: "";
+    background: url('../images/mabalanoy.jpg') no-repeat center;
+    opacity: 0.06;
+    background-size: contain;
+    position: fixed;
+    top: 0;
+    left: 0;    
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.forest-green {
+  background-color: #228B22 !important;
+  color: white !important;
+}
+
+.forest-green-text {
+  color: #228B22 !important;
+}

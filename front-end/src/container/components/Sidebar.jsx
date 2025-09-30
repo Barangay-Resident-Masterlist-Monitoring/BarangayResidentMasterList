@@ -7,6 +7,8 @@ import {
   FaChevronRight
 } from 'react-icons/fa';
 
+import mabalanoyLogo from '../images/mabalanoy.png';
+
 const navItems = [
   { icon: <FaTachometerAlt />, label: 'Dashboard', href: '#' },
   { icon: <FaUsers />, label: 'Residents', href: '#' },
@@ -16,15 +18,15 @@ const navItems = [
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
-  // Hover state to improve animation on each nav item
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
     <div
-      className="bg-primary text-white d-flex flex-column position-fixed top-0 start-0 vh-100 shadow-sm"
+      className="text-white d-flex flex-column position-fixed top-0 start-0 vh-100 shadow-sm"
       style={{
         width: collapsed ? '70px' : '240px',
         transition: 'width 0.3s',
+        backgroundColor: '#228B22',
         zIndex: 1,
       }}
     >
@@ -39,23 +41,35 @@ const Sidebar = () => {
         {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
       </button>
 
-      {/* Title / Logo */}
-      <div className="d-flex align-items-center justify-content-center py-4">
-        <span style={{ fontSize: '1.8rem' }}></span>
+    <div className="d-flex flex-column align-items-center justify-content-center py-4">
+        {/* Logo Image */}
+
+          <img
+            src={mabalanoyLogo} 
+            alt="Barangay Logo"
+            style={{
+              width: '120px',
+              height: '120px',
+              objectFit: 'cover',
+            }}
+          />
+    
+
+        {/* Title */}
         {!collapsed && (
           <span
-            className="ms-1 fw-bold fs-5 text-center"
+            className="ms-3 fw-bold fs-5"
             style={{
               wordBreak: 'break-word',
               overflowWrap: 'break-word',
               whiteSpace: 'normal',
-              display: 'inline-block',
             }}
           >
             Barangay Monitoring System
           </span>
         )}
       </div>
+
 
       {/* Divider Line */}
       <div className="border-top border-white opacity-50 mx-3 mb-3"></div>
