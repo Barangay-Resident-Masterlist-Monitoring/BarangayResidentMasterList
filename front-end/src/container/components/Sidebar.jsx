@@ -41,34 +41,23 @@ const Sidebar = () => {
         {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
       </button>
 
-    <div className="d-flex flex-column align-items-center justify-content-center py-4">
-        {/* Logo Image */}
+     <div className="d-flex flex-column align-items-center justify-content-center py-4">
 
-          <img
-            src={mabalanoyLogo} 
-            alt="Barangay Logo"
-            style={{
-              width: '120px',
-              height: '120px',
-              objectFit: 'cover',
-            }}
-          />
-    
+      {/* Logo Image */}
+      <img
+        src={mabalanoyLogo}
+        alt="Barangay Logo"
+        className={`img-fluid rounded-circle ${collapsed ? 'w-25' : 'w-50'} transition-all`}
+        style={{ objectFit: 'cover' }}
+      />
 
-        {/* Title */}
-        {!collapsed && (
-          <span
-            className="ms-3 fw-bold fs-5"
-            style={{
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
-              whiteSpace: 'normal',
-            }}
-          >
-            Barangay Monitoring System
-          </span>
-        )}
-      </div>
+      {/* Title */}
+      {!collapsed && (
+        <span className="mt-2 fw-bold fs-5 text-center">
+          Barangay Monitoring System
+        </span>
+      )}
+    </div>
 
 
       {/* Divider Line */}
