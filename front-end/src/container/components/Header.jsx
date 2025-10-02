@@ -1,14 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import headerCSS from '../css/header.module.css';
-import { FaBars, FaBell, FaUserCircle } from 'react-icons/fa';
+import { FaBell, FaUserCircle } from 'react-icons/fa';
 
-const Header = ({ type }) => {
+const Header = () => {
+  const [currentEmail] = useState(sessionStorage.getItem('email') || '');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarToggled, setSidebarToggled] = useState(sessionStorage.getItem('onToggleSidebar') || 'false');
 
   const userMenuRef = useRef(null);
   const notifRef = useRef(null);
+
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: 'You have a new message' },
+    { id: 2, message: 'New report uploaded' },
+    { id: 3, message: 'System update available' }
+  ]);
 
   const toggleUserMenu = () => {
     setShowUserMenu((prev) => !prev);
@@ -18,6 +25,10 @@ const Header = ({ type }) => {
   const toggleNotifications = () => {
     setShowNotifications((prev) => !prev);
     setShowUserMenu(false); 
+  };
+
+  const handleNotificationClick = (id) => {
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   };
 
   useEffect(() => {
@@ -44,9 +55,22 @@ const Header = ({ type }) => {
       }
     >
       <div className="container-fluid px-4">
-        <a className={`navbar-brand ${headerCSS.brandText} text-white`} href="#">
-          {type ? `${type}'s Dashboard` : 'Dashboard'}
+        <a className={`navbar-brand ${headerCSS.brandText} text-white d-flex align-items-center`} href="#">
+         <span
+            className="badge text-dark bg-white px-3 py-2 rounded-pill"
+            style={{
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 600,
+              fontSize: '1rem',
+              letterSpacing: '0.05em',
+              textShadow: '0 1px 1px rgba(0,0,0,0.1)',
+            }}
+          >
+            {currentEmail ? `${currentEmail.charAt(0).toUpperCase() + currentEmail.split('@')[0].trim()}'s Dashboard` : 'Dashboard'}
+          </span>
+
         </a>
+
         <button
           className={`navbar-toggler ${headerCSS.customToggler} bg-white text-white`}
           type="button"
@@ -60,11 +84,29 @@ const Header = ({ type }) => {
           <ul className="navbar-nav align-items-center">
             <li className="nav-item mx-2 position-relative" ref={notifRef}>
               <button
-                className={`nav-link btn ${headerCSS.neonButton} text-white`}
+                className={`nav-link btn ${headerCSS.neonButton} text-white position-relative`}
                 style={{ background: 'none', border: 'none', padding: 0 }}
                 onClick={toggleNotifications}
               >
                 <FaBell size={20} />
+                {notifications.length > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-5px',
+                      right: '-8px',
+                      background: '#dc3545',
+                      color: 'white',
+                      borderRadius: '50%',
+                      padding: '0 6px',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      boxShadow: '0 0 2px rgba(0,0,0,0.2)',
+                    }}
+                  >
+                    {notifications.length}
+                  </span>
+                )}
               </button>
 
               {showNotifications && (
@@ -75,9 +117,29 @@ const Header = ({ type }) => {
                 >
                   <div className="dropdown-item-text text-muted small mb-2">Notifications</div>
                   <div className="dropdown-divider"></div>
-                  <div className="dropdown-item">You have a new message</div>
-                  <div className="dropdown-item">New report uploaded</div>
-                  <div className="dropdown-item">System update available</div>
+
+                  {notifications.length > 0 ? (
+                    notifications.map((note) => (
+                      <button
+                        key={note.id}
+                        className="dropdown-item text-start"
+                        onClick={() => handleNotificationClick(note.id)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          width: '100%',
+                          padding: '0.25rem 1rem',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {note.message}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="dropdown-item text-muted small">No new notifications</div>
+                  )}
+
                   <div className="dropdown-divider"></div>
                   <a className="dropdown-item text-primary" href="#">View all</a>
                 </div>
@@ -95,13 +157,13 @@ const Header = ({ type }) => {
 
               {showUserMenu && (
                 <div
-                  className={`position-absolute end-0 mt-2 p-2 bg-white rounded shadow ${headerCSS.chatDropdown}`}
+                  className={`position-absolute end-0 mt-2 p-2 bg-white rounded shadow-lg ${headerCSS.chatDropdown}`}
                   style={{ minWidth: '150px', zIndex: 1, marginRight: '-5px' }}
                   onMouseLeave={() => setShowUserMenu(false)}
                 >
                   <a className="dropdown-item" href="#">Profile</a>
                   <div className="dropdown-divider"></div>
-                  <a className="dropdown-item text-danger" href="#">Logout</a>
+                  <a className="dropdown-item text-danger" href="/*">Logout</a>
                 </div>
               )}
             </li>

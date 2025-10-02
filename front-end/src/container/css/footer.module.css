@@ -1,0 +1,25 @@
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #228B22;
+  color: #fff;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+}
+
+.logoContainer {
+  width: 120px;
+}
+
+.logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.text {
+  font-size: 0.9rem;
+}
