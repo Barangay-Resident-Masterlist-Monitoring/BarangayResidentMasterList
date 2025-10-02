@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef} from 'react';
+import { useNavigate } from 'react-router-dom';
 import headerCSS from '../css/header.module.css';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
 
@@ -7,9 +8,14 @@ const Header = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarToggled, setSidebarToggled] = useState(sessionStorage.getItem('onToggleSidebar') || 'false');
+  const navigate = useNavigate();
 
   const userMenuRef = useRef(null);
   const notifRef = useRef(null);
+
+  const backward = () =>{
+    navigate(-1);
+  }
 
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'You have a new message' },
@@ -163,7 +169,12 @@ const Header = () => {
                 >
                   <a className="dropdown-item" href="#">Profile</a>
                   <div className="dropdown-divider"></div>
-                  <a className="dropdown-item text-danger" href="/*">Logout</a>
+                <button 
+                    className="dropdown-item text-danger" 
+                    onClick={backward}
+                  >
+                    Logout
+                  </button>
                 </div>
               )}
             </li>

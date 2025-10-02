@@ -1,14 +1,17 @@
 .footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end; 
   padding: 1rem 2rem;
   background-color: #228B22;
   color: #fff;
-  position: fixed;
-  width: 100%;
-  left: 0;
+  position: absolute;
+  top: 69rem;
   bottom: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  z-index: 1;
 }
 
 .logoContainer {
