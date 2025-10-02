@@ -1,10 +1,12 @@
+import { useState, useEffect, useRef } from 'react';
 import headerCSS from '../css/header.module.css';
 import { FaBars, FaBell, FaUserCircle } from 'react-icons/fa';
-import { useState, useRef } from 'react';
 
-const Header = ({ type, onToggleSidebar }) => {
+const Header = ({ type }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [sidebarToggled, setSidebarToggled] = useState(sessionStorage.getItem('onToggleSidebar') || 'false');
+
   const userMenuRef = useRef(null);
   const notifRef = useRef(null);
 
@@ -18,15 +20,30 @@ const Header = ({ type, onToggleSidebar }) => {
     setShowUserMenu(false); 
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const storedValue = sessionStorage.getItem('onToggleSidebar') || 'false';
+      setSidebarToggled((prev) => {
+        if (prev !== storedValue) {
+          return storedValue;
+        }
+        return prev;
+      });
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <nav className={`navbar navbar-expand-lg bg- ${headerCSS.navbar} mb-4`}>
+    <nav
+      className={`navbar navbar-expand-lg bg- ${headerCSS.navbar} mb-4`}
+      style={
+        sidebarToggled === 'true'
+          ? { paddingLeft: '4rem', transition: 'padding-left 0.1s' }
+          : { paddingLeft: '15rem', transition: 'padding-left 0.1s'}
+      }
+    >
       <div className="container-fluid px-4">
-        <button
-          className={`btn btn-outline-light me-3 ${headerCSS.sidebarToggleBtn}`}
-          onClick={onToggleSidebar}
-        >
-          <FaBars />
-        </button>
         <a className={`navbar-brand ${headerCSS.brandText} text-white`} href="#">
           {type ? `${type}'s Dashboard` : 'Dashboard'}
         </a>
@@ -82,7 +99,7 @@ const Header = ({ type, onToggleSidebar }) => {
                   style={{ minWidth: '150px', zIndex: 1, marginRight: '-5px' }}
                   onMouseLeave={() => setShowUserMenu(false)}
                 >
-                  <a className="dropdown-item" href="#" >Profile</a>
+                  <a className="dropdown-item" href="#">Profile</a>
                   <div className="dropdown-divider"></div>
                   <a className="dropdown-item text-danger" href="#">Logout</a>
                 </div>

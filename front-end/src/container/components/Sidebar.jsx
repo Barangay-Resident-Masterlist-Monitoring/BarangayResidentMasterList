@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import {
   FaTachometerAlt,
   FaUsers,
@@ -16,9 +16,13 @@ const navItems = [
 ];
 
 const Sidebar = () => {
+ 
   const [collapsed, setCollapsed] = useState(false);
-
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  useEffect(() => { 
+      sessionStorage.setItem('onToggleSidebar', collapsed)
+  }, [collapsed]);
 
   return (
     <div
