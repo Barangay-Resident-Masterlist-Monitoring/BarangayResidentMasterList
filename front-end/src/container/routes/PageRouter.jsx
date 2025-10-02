@@ -20,9 +20,10 @@ const PageRouter = () => {
   return (
       <Router>
         <Routes>
+         <Route path="/resident/login" element={<ResidentLogin />} />
+          <Route path="/secretary/login" element={<SecretaryLogin />} />
           <Route path="/*" element={<Navigate to="/resident/login" />} />
-          <Route path="/resident/login" element={<ResidentLogin/>} /> 
-          <Route path="/secretary/login" element={<SecretaryLogin/>} />
+
 
           <Route 
             exact path="/resident"

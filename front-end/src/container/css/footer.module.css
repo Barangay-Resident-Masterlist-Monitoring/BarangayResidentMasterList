@@ -1,15 +1,13 @@
 .footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end; 
+  justify-content: flex-end;
   padding: 1rem 2rem;
   background-color: #228B22;
   color: #fff;
-  position: absolute;
-  top: 69rem;
+  position: fixed;
   bottom: 0;
   left: 0;
-  height: 60px;
   width: 100%;
   z-index: 1;
 }
@@ -25,4 +23,10 @@
 
 .text {
   font-size: 0.9rem;
+}
+
+@media (max-width: 991.98px) {
+  .footer {
+    display: none;
+  }
 }
