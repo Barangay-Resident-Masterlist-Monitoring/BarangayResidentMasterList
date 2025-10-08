@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useSweetAlert from '../hooks/useSweetAlert';
 import styles from '../css/login.module.css';
 
 const ManageUser = () => {
   const { fireSuccess, fireError, fireConfirm } = useSweetAlert();
 
-  const [residents, setResidents] = useState([]);
+  const [residents, setResidents] = useState(() => {
+    const stored = localStorage.getItem('secretary');
+    return stored ? JSON.parse(stored) : [];
+  });
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [viewPhoto, setViewPhoto] = useState(null);
   const [formData, setFormData] = useState({
@@ -24,17 +28,26 @@ const ManageUser = () => {
     photoURL: '',
   });
 
-  useEffect(() => {
-    const stored = localStorage.getItem('secretary');
-    if (stored) setResidents(JSON.parse(stored));
-  }, []);
-
+  const hasLoaded = useRef(true);
 
   useEffect(() => {
-    localStorage.setItem('secretary', JSON.stringify(residents));
+    if (hasLoaded.current) {
+      localStorage.setItem('secretary', JSON.stringify(residents));
+    }
   }, [residents]);
 
   const generateId = () => Math.floor(Math.random() * 100000);
+
+  const calculateAge = (birthdate) => {
+    const today = new Date();
+    const birth = new Date(birthdate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
 
   const openModal = (resident = null) => {
     if (resident) {
@@ -67,6 +80,9 @@ const ManageUser = () => {
       const file = files[0];
       const photoURL = URL.createObjectURL(file);
       setFormData((prev) => ({ ...prev, photo: file, photoURL }));
+    } else if (name === 'birthdate') {
+      const age = calculateAge(value);
+      setFormData((prev) => ({ ...prev, birthdate: value, age }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -107,13 +123,11 @@ const ManageUser = () => {
     }
 
     if (id) {
-      // Update existing resident
       setResidents((prev) =>
         prev.map((res) => (res.id === id ? { ...formData } : res))
       );
       fireSuccess('Updated!', 'Resident updated.');
     } else {
-      // Add new resident
       const newResident = {
         ...formData,
         id: generateId(),
@@ -134,74 +148,92 @@ const ManageUser = () => {
     });
   };
 
+  const filteredResidents = residents.filter((res) => {
+    const fullName = `${res.firstName} ${res.middleName} ${res.lastName}`.toLowerCase();
+    const search = searchTerm.toLowerCase();
+    return (
+      fullName.includes(search) ||
+      res.age.toString().includes(search) ||
+      res.sex.toLowerCase().includes(search) ||
+      res.birthdate.toLowerCase().includes(search) ||
+      res.civilStatus.toLowerCase().includes(search) ||
+      res.occupation.toLowerCase().includes(search) ||
+      res.contactNumber.toLowerCase().includes(search) ||
+      res.role.toLowerCase().includes(search)
+    );
+  });
+
   return (
     <div className={`container my-5 ${styles.bg}`}>
       <h2 className={`mb-4 ${styles['forest-green-text']}`}>Residents and Officials</h2>
 
-      <button className={`btn mb-3 ${styles['forest-green']}`} onClick={() => openModal()}>
-        + Add New Resident/Official
-      </button>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <button className={`btn ${styles['forest-green']}`} onClick={() => openModal()}>
+          + Add New Resident/Official
+        </button>
+        <input
+          type="text"
+          className="form-control"
+          style={{ maxWidth: '300px' }}
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       <div className="table-responsive">
         <table className="table table-bordered table-hover align-middle">
           <thead className={`${styles['forest-green']} text-white`}>
             <tr>
-              <th style={{ whiteSpace: 'nowrap' }}>#</th>
-              <th style={{ minWidth: '180px' }}>Name</th>
-              <th style={{ whiteSpace: 'nowrap' }}>Age</th>
-              <th style={{ whiteSpace: 'nowrap' }}>Sex</th>
-              <th style={{ whiteSpace: 'nowrap' }}>Birthdate</th>
-              <th style={{ minWidth: '120px' }}>Civil Status</th>
-              <th style={{ minWidth: '140px' }}>Occupation</th>
-              <th style={{ minWidth: '140px' }}>Contact Number</th>
-              <th style={{ whiteSpace: 'nowrap' }}>Role</th>
-              <th style={{ whiteSpace: 'nowrap' }}>Photo</th>
-              <th style={{ whiteSpace: 'nowrap' }}>Actions</th>
+              <th>#</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Sex</th>
+              <th>Birthdate</th>
+              <th>Civil Status</th>
+              <th>Occupation</th>
+              <th>Contact Number</th>
+              <th>Role</th>
+              <th>Photo</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {residents.length === 0 ? (
+            {filteredResidents.length === 0 ? (
               <tr>
                 <td colSpan={11} className="text-center">
-                  No residents yet.
+                  No residents found.
                 </td>
               </tr>
             ) : (
-              residents.map((resident, idx) => (
+              filteredResidents.map((resident, idx) => (
                 <tr key={resident.id}>
-                  <td style={{ whiteSpace: 'nowrap' }}>{resident.id}</td>
-
+                  <td>{resident.id}</td>
                   <td>
                     <div className="text-truncate" style={{ maxWidth: '180px' }}>
                       {`${resident.firstName} ${resident.middleName} ${resident.lastName}`}
                     </div>
                   </td>
-
-                  <td style={{ whiteSpace: 'nowrap' }}>{resident.age}</td>
-                  <td style={{ whiteSpace: 'nowrap' }}>{resident.sex}</td>
-                  <td style={{ whiteSpace: 'nowrap' }}>{resident.birthdate}</td>
-
+                  <td>{resident.age}</td>
+                  <td>{resident.sex}</td>
+                  <td>{resident.birthdate}</td>
                   <td>
                     <div className="text-truncate" style={{ maxWidth: '120px' }}>
                       {resident.civilStatus}
                     </div>
                   </td>
-
                   <td>
                     <div className="text-truncate" style={{ maxWidth: '140px' }}>
                       {resident.occupation}
                     </div>
                   </td>
-
                   <td>
                     <div className="text-truncate" style={{ maxWidth: '140px' }}>
                       {resident.contactNumber}
                     </div>
                   </td>
-
-                  <td style={{ whiteSpace: 'nowrap' }}>{resident.role}</td>
-
-                  <td className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                  <td>{resident.role}</td>
+                  <td className="text-center">
                     {resident.photoURL ? (
                       <img
                         src={resident.photoURL}
@@ -213,8 +245,7 @@ const ManageUser = () => {
                       'No photo'
                     )}
                   </td>
-
-                  <td style={{ whiteSpace: 'nowrap' }}>
+                  <td>
                     <a
                       href="#"
                       className="btn btn-sm btn-link text-primary me-2"
@@ -234,7 +265,7 @@ const ManageUser = () => {
                     </button>
                     <button
                       className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(idx)}
+                      onClick={() => handleDelete(residents.indexOf(resident))}
                     >
                       Delete
                     </button>
@@ -246,7 +277,6 @@ const ManageUser = () => {
         </table>
       </div>
 
-      {/* Add/Edit Resident Modal */}
       {showModal && (
         <div
           className="modal fade show d-block"
@@ -273,7 +303,6 @@ const ManageUser = () => {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  {/* First Name */}
                   <div className="mb-3">
                     <label className="form-label">First Name</label>
                     <input
@@ -285,8 +314,6 @@ const ManageUser = () => {
                       required
                     />
                   </div>
-
-                  {/* Middle Name */}
                   <div className="mb-3">
                     <label className="form-label">Middle Name</label>
                     <input
@@ -298,8 +325,6 @@ const ManageUser = () => {
                       required
                     />
                   </div>
-
-                  {/* Last Name */}
                   <div className="mb-3">
                     <label className="form-label">Last Name</label>
                     <input
@@ -311,8 +336,6 @@ const ManageUser = () => {
                       required
                     />
                   </div>
-
-                  {/* Age */}
                   <div className="mb-3">
                     <label className="form-label">Age</label>
                     <input
@@ -324,10 +347,9 @@ const ManageUser = () => {
                       value={formData.age}
                       onChange={handleChange}
                       required
+                      readOnly
                     />
                   </div>
-
-                  {/* Sex */}
                   <div className="mb-3">
                     <label className="form-label">Sex</label>
                     <select
@@ -342,8 +364,6 @@ const ManageUser = () => {
                       <option value="Female">Female</option>
                     </select>
                   </div>
-
-                  {/* Birthdate */}
                   <div className="mb-3">
                     <label className="form-label">Birthdate</label>
                     <input
@@ -355,8 +375,6 @@ const ManageUser = () => {
                       required
                     />
                   </div>
-
-                  {/* Civil Status */}
                   <div className="mb-3">
                     <label className="form-label">Civil Status</label>
                     <select
@@ -373,8 +391,6 @@ const ManageUser = () => {
                       <option value="Separated">Separated</option>
                     </select>
                   </div>
-
-                  {/* Occupation */}
                   <div className="mb-3">
                     <label className="form-label">Occupation</label>
                     <input
@@ -386,8 +402,6 @@ const ManageUser = () => {
                       required
                     />
                   </div>
-
-                  {/* Contact Number */}
                   <div className="mb-3">
                     <label className="form-label">Contact Number</label>
                     <input
@@ -401,8 +415,6 @@ const ManageUser = () => {
                       placeholder="+639xxxxxxxxx"
                     />
                   </div>
-
-                  {/* Role */}
                   <div className="mb-3">
                     <label className="form-label">Role</label>
                     <select
@@ -416,8 +428,6 @@ const ManageUser = () => {
                       <option value="Secretary">Secretary</option>
                     </select>
                   </div>
-
-                  {/* Photo */}
                   <div className="mb-3">
                     <label className="form-label">Photo</label>
                     <input
@@ -456,7 +466,6 @@ const ManageUser = () => {
         </div>
       )}
 
-      {/* View Photo Modal */}
       {viewPhoto && (
         <div
           className="modal fade show d-block"

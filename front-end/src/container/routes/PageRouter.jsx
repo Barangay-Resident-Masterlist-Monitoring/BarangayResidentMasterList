@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import ProfileView from "../components/ProfileView.jsx";
 
 import Resident from "../resident/main.jsx";
 import ResidentLogin from "../resident/login.jsx";
 import ResidentDashboard from "../resident/dashboard.jsx";
 import RegisterResidents from "../resident/RegisterResident.jsx";
 import GenerateReports from "../resident/generate_reports.jsx";
+import RequestUpdate from "../resident/requestUpdate.jsx";
 
 import Secretary from "../secretary/main.jsx";
 import SecretaryLogin from "../secretary/login.jsx";
@@ -19,6 +21,9 @@ const PageRouter = () => {
         <Route path="/secretary/login" element={<SecretaryLogin />} />
 
         <Route path="/resident" element={<Resident />}>
+          <Route path="profile-view" element={<ProfileView />} />
+
+          <Route path="request-update" element={<RequestUpdate />} />
           <Route path="dashboard" element={<ResidentDashboard />} />
           <Route path="register-residents" element={<RegisterResidents />} />
           <Route path="generate-report" element={<GenerateReports />} />
@@ -26,6 +31,8 @@ const PageRouter = () => {
         </Route>
 
         <Route path="/secretary" element={<Secretary />}>
+          <Route path="profile-view" element={<ProfileView />} />
+
           <Route path="dashboard" element={<SecretaryDashboard />} />
           <Route path="manage-residents" element={<ManageResidentsAndOfficial />} />
           <Route index element={<Navigate to="dashboard" replace />} />

@@ -13,9 +13,12 @@ const Header = () => {
   const userMenuRef = useRef(null);
   const notifRef = useRef(null);
 
-  const backward = () =>{
-    navigate(-1);
-  }
+const backward = () => {
+  navigate(`/${sessionStorage.getItem('userType')}/login`);
+  sessionStorage.clear();
+  localStorage.clear();
+};
+
 
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'You have a new message' },
@@ -72,7 +75,10 @@ const Header = () => {
               textShadow: '0 1px 1px rgba(0,0,0,0.1)',
             }}
           >
-            {currentEmail ? `${currentEmail.charAt(0).toUpperCase() + currentEmail.split('@')[0].trim()}'s Dashboard` : 'Dashboard'}
+          {currentEmail 
+        ? currentEmail.split('@')[0].trim().replace(/^./, match => match.toUpperCase()) 
+        : 'Dashboard'}
+
           </span>
 
         </a>
@@ -87,7 +93,7 @@ const Header = () => {
         </button>
 
         <div className="collapse navbar-collapse justify-content-end" id="navbarGlass">
-          <ul className="navbar-nav align-items-center">
+          <ul className="navbar-nav align-items-end mb-2 mb-lg-0">
             <li className="nav-item mx-2 position-relative" ref={notifRef}>
               <button
                 className={`nav-link btn ${headerCSS.neonButton} text-white position-relative`}
@@ -167,7 +173,8 @@ const Header = () => {
                   style={{ minWidth: '150px', zIndex: 1, marginRight: '-5px' }}
                   onMouseLeave={() => setShowUserMenu(false)}
                 >
-                  <a className="dropdown-item" href="#">Profile</a>
+                  <a className="dropdown-item" href={`${sessionStorage.getItem('userType')}/profile-view`}
+                  >Profile</a>
                   <div className="dropdown-divider"></div>
                 <button 
                     className="dropdown-item text-danger" 

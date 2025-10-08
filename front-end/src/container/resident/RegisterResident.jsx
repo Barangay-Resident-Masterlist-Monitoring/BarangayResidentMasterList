@@ -8,6 +8,8 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
   const [residents, setResidents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [viewPhoto, setViewPhoto] = useState(null);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  
   const [formData, setFormData] = useState({
     id: '',
     firstName: '',
@@ -24,17 +26,29 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
     photoURL: '',
   });
 
-
   const [currentUserIdState, setCurrentUserIdState] = useState(currentUserId);
 
   useEffect(() => {
     const stored = localStorage.getItem('secretary');
-    if (stored) setResidents(JSON.parse(stored));
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setResidents(parsed);
+        }
+      } catch (err) {
+        console.error('Failed to parse stored residents:', err);
+      }
+    }
+    setInitialLoadDone(true);
   }, []);
 
+
   useEffect(() => {
-    localStorage.setItem('secretary', JSON.stringify(residents));
-  }, [residents]);
+    if (initialLoadDone) {
+      localStorage.setItem('secretary', JSON.stringify(residents));
+    }
+  }, [residents, initialLoadDone]);
 
   const currentResident = residents.find((r) => r.id === currentUserIdState);
 
@@ -73,6 +87,15 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
         const photoURL = URL.createObjectURL(file);
         setFormData((prev) => ({ ...prev, photo: file, photoURL }));
       }
+    } else if (name === 'birthdate') {
+      const birthDate = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      setFormData((prev) => ({ ...prev, birthdate: value, age: age.toString() }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -121,10 +144,10 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
       const newResident = {
         ...formData,
         id: newId,
-        role: 'Resident', 
+        role: 'Resident',
       };
       setResidents((prev) => [...prev, newResident]);
-      setCurrentUserIdState(newId); 
+      setCurrentUserIdState(newId);
       fireSuccess('Registered!', 'Your account has been created.');
       setShowModal(false);
       return;
@@ -156,9 +179,7 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
     });
   };
 
-
   if (userRole === 'resident') {
-
     if (!currentResident) {
       return (
         <div className={`container-fluid my-5 ${styles.bg}`}>
@@ -170,7 +191,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
             Register Your Account
           </button>
 
-          {/* Registration Modal */}
           {showModal && (
             <div
               className="modal fade show d-block"
@@ -195,7 +215,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
                       ></button>
                     </div>
                     <div className="modal-body">
-                      {/* Form inputs */}
 
                       <div className="mb-3">
                         <label className="form-label">First Name</label>
@@ -244,6 +263,7 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
                           value={formData.age}
                           onChange={handleChange}
                           required
+                          readOnly
                         />
                       </div>
 
@@ -362,7 +382,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
       );
     }
 
-    // Resident already registered: show read-only profile only
     return (
       <div className={`container my-5 ${styles.bg}`}>
         <h2 className={`mb-4 ${styles['forest-green-text']}`}> Resident Profile </h2>
@@ -389,7 +408,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
           <p>Occupation: {currentResident.occupation}</p>
           <p>Contact Number: {currentResident.contactNumber}</p>
 
-          {/* View Photo Modal */}
           {viewPhoto && (
             <div
               className="modal fade show d-block"
@@ -424,8 +442,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
     );
   }
 
-  // ADMIN VIEW
-  // Admin can add/update/delete residents, with list and modal
   return (
     <div className={`container my-5 ${styles.bg}`}>
       <h2 className={`mb-4 ${styles['forest-green-text']}`}> Manage Residents </h2>
@@ -433,7 +449,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
         Add New Resident
       </button>
 
-      {/* Residents Table */}
       <div className="table-responsive">
         <table className="table table-bordered table-hover">
           <thead className={styles['forest-green']}>
@@ -497,7 +512,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
         </table>
       </div>
 
-      {/* Modal for Add/Edit Resident */}
       {showModal && (
         <div
           className="modal fade show d-block"
@@ -524,7 +538,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  {/* Form inputs same as resident modal */}
                   <div className="mb-3">
                     <label className="form-label">First Name</label>
                     <input
@@ -572,6 +585,7 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
                       value={formData.age}
                       onChange={handleChange}
                       required
+                      readOnly
                     />
                   </div>
 
@@ -700,7 +714,6 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
         </div>
       )}
 
-      {/* View Photo Modal */}
       {viewPhoto && (
         <div
           className="modal fade show d-block"

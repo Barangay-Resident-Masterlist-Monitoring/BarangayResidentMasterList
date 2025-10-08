@@ -11,6 +11,10 @@
     z-index: -1;
     pointer-events: none;
 }
+
+.bg{
+  height: 100vh;
+}
 .bg-1::before {
     content: "";
     background: url('../images/mabalanoy-map.png') no-repeat center;

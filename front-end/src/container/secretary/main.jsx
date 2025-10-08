@@ -1,4 +1,4 @@
-import Footer from '../components/footer';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import MainContent from '../components/MainContent';
 import SideBar from '../components/Sidebar';
@@ -10,7 +10,7 @@ const main = () => {
       <Header />
       <SideBar />
       <MainContent />
-      <Footer />
+      <Footer style={{position: 'relative', bottom: '0', }} />
     </div>
   );
 };

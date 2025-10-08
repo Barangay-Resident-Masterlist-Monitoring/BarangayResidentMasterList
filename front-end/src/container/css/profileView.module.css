@@ -1,0 +1,39 @@
+.profileCard {
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  padding: 2rem;
+  background-color: #ffffff;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* .profileCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 2rem rgba(0,0,0,0.2);
+} */
+
+.profileName {
+  color:  #228B22;
+  font-weight: 600;
+}
+
+.profileRole {
+  color:  #228B22;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.profileInfo span {
+  font-weight: 500;
+  color:  #228B22;
+}
+
+.btnForest {
+  background-color:  #228B22;
+  color: #fff;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.btnForest:hover {
+  background-color:  #a2e4a2;
+}
