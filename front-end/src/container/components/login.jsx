@@ -16,7 +16,6 @@ const Login = ({ currentUserType }) => {
   };
 
   const generateNumericId = () => {
-    // Optional: auto-increment from previous session IDs
     const lastId = parseInt(localStorage.getItem('lastSessionId') || '0', 10);
     const newId = lastId + 1;
     localStorage.setItem('lastSessionId', newId);
@@ -31,10 +30,10 @@ const Login = ({ currentUserType }) => {
       const isAuthenticated = authenticate(email, password);
 
       if (isAuthenticated) {
-        const sessionId = generateNumericId(); // generate numerical ID
+        const sessionId = generateNumericId();
         sessionStorage.setItem('userType', userType);
         sessionStorage.setItem('email', email);
-        sessionStorage.setItem('sessionId', sessionId); // store numerical ID
+        sessionStorage.setItem('sessionId', sessionId); 
         navigate(`/${userType}/dashboard`);
       } else {
         setError('Invalid credentials. Please try again.');

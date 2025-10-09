@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import MainContent from '../components/MainContent';
 import SideBar from '../components/Sidebar';
 
-const main = () => {
+const Main = () => {
  
   return (
     <div>
@@ -16,4 +16,4 @@ const main = () => {
   );
 };
 
-export default main;
+export default Main;

@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import ProfileView from "../components/ProfileView.jsx";
 
-import Resident from "../resident/main.jsx";
-import ResidentLogin from "../resident/login.jsx";
-import ResidentDashboard from "../resident/dashboard.jsx";
+import Resident from "../resident/Main.jsx";
+import ResidentLogin from "../resident/Login.jsx";
+import ResidentDashboard from "../resident/Dashboard.jsx";
 import RegisterResidents from "../resident/RegisterResident.jsx";
 import GenerateReports from "../resident/GenerateReport.jsx";
 import RequestUpdate from "../resident/RequestUpdate.jsx";
 
-import Secretary from "../secretary/main.jsx";
-import SecretaryLogin from "../secretary/login.jsx";
-import SecretaryDashboard from "../secretary/dashboard.jsx";
+import Secretary from "../secretary/Main.jsx";
+import SecretaryLogin from "../secretary/Login.jsx";
+import SecretaryDashboard from "../secretary/Dashboard.jsx";
 import ManageResidentsAndOfficial from "../secretary/ManagerUser.jsx"; 
 import GenerateReportsForSecretary from "../secretary/GenerateReport.jsx";
 

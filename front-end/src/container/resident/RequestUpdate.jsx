@@ -110,7 +110,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                       <input
                         type="text"
                         className="form-control"
-                        value={fields[key]}
+                        value={fields[key] ?? []}
                         onChange={(e) => handleFieldChange(key, e.target.value)}
                         disabled={requestStatus==='denied' || viewOnly}
                         style={{ borderColor: color['forest-green'], width: '100%' }}

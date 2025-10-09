@@ -5,13 +5,15 @@ import styles from '../css/login.module.css';
 const ManageUser = () => {
   const { fireSuccess, fireError, fireConfirm } = useSweetAlert();
 
-  const [residents, setResidents] = useState(() => {
-    const stored = localStorage.getItem('secretary');
+  const [users, setUsers] = useState(() => {
+    const stored = localStorage.getItem('users') || localStorage.getItem('resident');
     return stored ? JSON.parse(stored) : [];
   });
+
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [viewPhoto, setViewPhoto] = useState(null);
+
   const [formData, setFormData] = useState({
     id: '',
     firstName: '',
@@ -23,18 +25,28 @@ const ManageUser = () => {
     civilStatus: '',
     occupation: '',
     contactNumber: '',
-    role: 'Resident',
+    role: 'Secretary',
     photo: null,
     photoURL: '',
   });
 
-  const hasLoaded = useRef(true);
+  const getMaxBirthdate = () => {
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 18);
+    return today.toISOString().split('T')[0];
+  };
+
+  const hasLoaded = useRef(false);
+
+  useEffect(() => {
+    hasLoaded.current = true;
+  }, []);
 
   useEffect(() => {
     if (hasLoaded.current) {
-      localStorage.setItem('secretary', JSON.stringify(residents));
+      localStorage.setItem('users', JSON.stringify(users));
     }
-  }, [residents]);
+  }, [users]);
 
   const generateId = () => Math.floor(Math.random() * 100000);
 
@@ -49,9 +61,9 @@ const ManageUser = () => {
     return age;
   };
 
-  const openModal = (resident = null) => {
-    if (resident) {
-      setFormData({ ...resident });
+  const openModal = (user = null) => {
+    if (user) {
+      setFormData({ ...user });
     } else {
       setFormData({
         id: '',
@@ -64,7 +76,7 @@ const ManageUser = () => {
         civilStatus: '',
         occupation: '',
         contactNumber: '',
-        role: 'Resident',
+        role: 'Secretary',
         photo: null,
         photoURL: '',
       });
@@ -72,14 +84,18 @@ const ManageUser = () => {
     setShowModal(true);
   };
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'photo') {
       const file = files[0];
-      const photoURL = URL.createObjectURL(file);
-      setFormData((prev) => ({ ...prev, photo: file, photoURL }));
+      if (file) {
+        const photoURL = URL.createObjectURL(file);
+        setFormData((prev) => ({ ...prev, photo: file, photoURL }));
+      }
     } else if (name === 'birthdate') {
       const age = calculateAge(value);
       setFormData((prev) => ({ ...prev, birthdate: value, age }));
@@ -104,6 +120,7 @@ const ManageUser = () => {
       contactNumber,
       photo,
       photoURL,
+      role,
     } = formData;
 
     if (
@@ -123,53 +140,62 @@ const ManageUser = () => {
     }
 
     if (id) {
-      setResidents((prev) =>
-        prev.map((res) => (res.id === id ? { ...formData } : res))
+      setUsers((prev) =>
+        prev.map((user) => (user.id === id ? { ...formData } : user))
       );
-      fireSuccess('Updated!', 'Resident updated.');
+      fireSuccess('Updated!', 'User updated.');
     } else {
-      const newResident = {
+      const newUser = {
         ...formData,
         id: generateId(),
       };
-      setResidents((prev) => [...prev, newResident]);
-      fireSuccess('Added!', 'New resident added.');
+      setUsers((prev) => [...prev, newUser]);
+      fireSuccess('Added!', 'New user added.');
     }
 
     setShowModal(false);
   };
 
-  const handleDelete = (idx) => {
-    fireConfirm('Are you sure?', 'This will remove the resident.').then((result) => {
+  const handleDelete = (userId) => {
+    fireConfirm('Are you sure?', 'This will remove the user.').then((result) => {
       if (result.isConfirmed) {
-        setResidents((prev) => prev.filter((_, i) => i !== idx));
-        fireSuccess('Deleted', 'Resident removed.');
+        setUsers((prev) => prev.filter((user) => user.id !== userId));
+        fireSuccess('Deleted', 'User removed.');
       }
     });
   };
 
-  const filteredResidents = residents.filter((res) => {
-    const fullName = `${res.firstName} ${res.middleName} ${res.lastName}`.toLowerCase();
+  const filteredUsers = users.filter((user) => {
+    const fullName = `${user.firstName} ${user.middleName} ${user.lastName}`.toLowerCase();
     const search = searchTerm.toLowerCase();
     return (
       fullName.includes(search) ||
-      res.age.toString().includes(search) ||
-      res.sex.toLowerCase().includes(search) ||
-      res.birthdate.toLowerCase().includes(search) ||
-      res.civilStatus.toLowerCase().includes(search) ||
-      res.occupation.toLowerCase().includes(search) ||
-      res.contactNumber.toLowerCase().includes(search) ||
-      res.role.toLowerCase().includes(search)
+      (user.age && user.age.toString().includes(search)) ||
+      (user.sex && user.sex.toLowerCase().includes(search)) ||
+      (user.birthdate && user.birthdate.toLowerCase().includes(search)) ||
+      (user.civilStatus && user.civilStatus.toLowerCase().includes(search)) ||
+      (user.occupation && user.occupation.toLowerCase().includes(search)) ||
+      (user.contactNumber && user.contactNumber.toLowerCase().includes(search)) ||
+      (user.role && user.role.toLowerCase().includes(search))
     );
   });
 
+  const occupationOptions = [
+    'Student',
+    'Employed',
+    'Self-Employed',
+    'Unemployed',
+    'Retired',
+    'Other',
+  ];
+
   return (
     <div className={`container my-5 ${styles.bg}`}>
-      <h2 className={`mb-4 ${styles['forest-green-text']}`}>Residents and Officials</h2>
+      <h2 className={`mb-4 ${styles['forest-green-text']}`}>Manage Residents and Officials</h2>
 
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex gap-5 justify-content-between align-items-center mb-3">
         <button className={`btn ${styles['forest-green']}`} onClick={() => openModal()}>
-          + Add New Resident/Official
+          + Add New Residents/Officials
         </button>
         <input
           type="text"
@@ -199,45 +225,29 @@ const ManageUser = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredResidents.length === 0 ? (
+            {filteredUsers.length === 0 ? (
               <tr>
                 <td colSpan={11} className="text-center">
-                  No residents found.
+                  No users found.
                 </td>
               </tr>
             ) : (
-              filteredResidents.map((resident, idx) => (
-                <tr key={resident.id}>
-                  <td>{resident.id}</td>
-                  <td>
-                    <div className="text-truncate" style={{ maxWidth: '180px' }}>
-                      {`${resident.firstName} ${resident.middleName} ${resident.lastName}`}
-                    </div>
-                  </td>
-                  <td>{resident.age}</td>
-                  <td>{resident.sex}</td>
-                  <td>{resident.birthdate}</td>
-                  <td>
-                    <div className="text-truncate" style={{ maxWidth: '120px' }}>
-                      {resident.civilStatus}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="text-truncate" style={{ maxWidth: '140px' }}>
-                      {resident.occupation}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="text-truncate" style={{ maxWidth: '140px' }}>
-                      {resident.contactNumber}
-                    </div>
-                  </td>
-                  <td>{resident.role}</td>
+              filteredUsers.map((user, idx) => (
+                <tr key={user.id + '-' + idx}>
+                  <td>{user.id}</td>
+                  <td>{`${user.firstName} ${user.middleName} ${user.lastName}`}</td>
+                  <td>{user.age}</td>
+                  <td>{user.sex}</td>
+                  <td>{user.birthdate}</td>
+                  <td>{user.civilStatus}</td>
+                  <td>{user.occupation}</td>
+                  <td>{user.contactNumber}</td>
+                  <td>{user.role}</td>
                   <td className="text-center">
-                    {resident.photoURL ? (
+                    {user.photoURL ? (
                       <img
-                        src={resident.photoURL}
-                        alt={resident.firstName}
+                        src={user.photoURL}
+                        alt="User"
                         className="img-thumbnail"
                         style={{ maxWidth: '60px', maxHeight: '60px', objectFit: 'cover' }}
                       />
@@ -251,22 +261,16 @@ const ManageUser = () => {
                       className="btn btn-sm btn-link text-primary me-2"
                       onClick={(e) => {
                         e.preventDefault();
-                        setViewPhoto(resident);
+                        setViewPhoto(user);
                       }}
                       style={{ textDecoration: 'underline' }}
                     >
                       View Photo
                     </a>
-                    <button
-                      className="btn btn-sm btn-primary me-2"
-                      onClick={() => openModal(resident)}
-                    >
+                    <button className="btn btn-sm btn-primary me-2" onClick={() => openModal(user)}>
                       Edit
                     </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(residents.indexOf(resident))}
-                    >
+                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(user.id)}>
                       Delete
                     </button>
                   </td>
@@ -293,9 +297,7 @@ const ManageUser = () => {
             <div className="modal-content">
               <form onSubmit={handleSubmit}>
                 <div className={`modal-header ${styles['forest-green']}`}>
-                  <h5 className="modal-title text-white">
-                    {formData.id ? 'Edit Resident / Official' : 'Add Resident / Official'}
-                  </h5>
+                  <h5 className="modal-title text-white">{formData.id ? 'Edit User' : 'Add User'}</h5>
                   <button
                     type="button"
                     className="btn-close btn-close-white"
@@ -309,7 +311,7 @@ const ManageUser = () => {
                       type="text"
                       className="form-control"
                       name="firstName"
-                      value={formData.firstName}
+                      value={formData.firstName ?? ''}
                       onChange={handleChange}
                       required
                     />
@@ -320,7 +322,7 @@ const ManageUser = () => {
                       type="text"
                       className="form-control"
                       name="middleName"
-                      value={formData.middleName}
+                      value={formData.middleName ?? ''}
                       onChange={handleChange}
                       required
                     />
@@ -331,9 +333,21 @@ const ManageUser = () => {
                       type="text"
                       className="form-control"
                       name="lastName"
-                      value={formData.lastName}
+                      value={formData.lastName ?? ''}
                       onChange={handleChange}
                       required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Birthdate</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="birthdate"
+                      value={formData.birthdate ?? ''}
+                      onChange={handleChange}
+                      required
+                      max={getMaxBirthdate()}
                     />
                   </div>
                   <div className="mb-3">
@@ -344,7 +358,7 @@ const ManageUser = () => {
                       name="age"
                       min="0"
                       max="120"
-                      value={formData.age}
+                      value={formData.age ?? ''}
                       onChange={handleChange}
                       required
                       readOnly
@@ -355,7 +369,7 @@ const ManageUser = () => {
                     <select
                       className="form-select"
                       name="sex"
-                      value={formData.sex}
+                      value={formData.sex ?? ''}
                       onChange={handleChange}
                       required
                     >
@@ -365,22 +379,11 @@ const ManageUser = () => {
                     </select>
                   </div>
                   <div className="mb-3">
-                    <label className="form-label">Birthdate</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      name="birthdate"
-                      value={formData.birthdate}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
                     <label className="form-label">Civil Status</label>
                     <select
                       className="form-select"
                       name="civilStatus"
-                      value={formData.civilStatus}
+                      value={formData.civilStatus ?? ''}
                       onChange={handleChange}
                       required
                     >
@@ -393,14 +396,39 @@ const ManageUser = () => {
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Occupation</label>
-                    <input
-                      type="text"
-                      className="form-control"
+                    <select
+                      className="form-select"
                       name="occupation"
-                      value={formData.occupation}
-                      onChange={handleChange}
+                      value={occupationOptions.includes(formData.occupation) ? formData.occupation : 'Other'}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value !== 'Other') {
+                          setFormData((prev) => ({ ...prev, occupation: value }));
+                        } else {
+                          setFormData((prev) => ({ ...prev, occupation: '' }));
+                        }
+                      }}
                       required
-                    />
+                    >
+                      <option value="">Select occupation</option>
+                      {occupationOptions.map((occ) => (
+                        <option key={occ} value={occ}>
+                          {occ}
+                        </option>
+                      ))}
+                    </select>
+                    {(!occupationOptions.includes(formData.occupation) || formData.occupation === '') && (
+                      <input
+                        type="text"
+                        className="form-control mt-2"
+                        placeholder="Please specify occupation"
+                        value={!occupationOptions.includes(formData.occupation) ? formData.occupation : ''}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, occupation: e.target.value }))
+                        }
+                        required
+                      />
+                    )}
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Contact Number</label>
@@ -411,7 +439,6 @@ const ManageUser = () => {
                       value={formData.contactNumber}
                       onChange={handleChange}
                       required
-                      pattern="^\+?\d{7,15}$"
                       placeholder="+639xxxxxxxxx"
                     />
                   </div>
@@ -420,12 +447,12 @@ const ManageUser = () => {
                     <select
                       className="form-select"
                       name="role"
-                      value={formData.role}
+                      value={formData.role ?? ''}
                       onChange={handleChange}
                       required
                     >
-                      <option value="Resident">Resident</option>
                       <option value="Secretary">Secretary</option>
+                      <option value="Resident">Resident</option>
                     </select>
                   </div>
                   <div className="mb-3">
@@ -456,7 +483,11 @@ const ManageUser = () => {
                   <button type="submit" className="btn btn-success">
                     {formData.id ? 'Update' : 'Add'}
                   </button>
-                  <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={closeModal}
+                  >
                     Cancel
                   </button>
                 </div>
