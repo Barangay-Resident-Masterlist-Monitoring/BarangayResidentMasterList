@@ -22,16 +22,18 @@
   font-size: 0.9rem;
 }
 
-@media (max-width: 991.98px) {
-  .footer {
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; 
-    word-break: break-word;
-    padding: 1rem; 
-    gap: 0.5rem; 
-    z-index:0;
+
+@media (max-width: 520px) {
+  .footer{
+     padding: 10px 0;
+     display: flex; 
+     flex-direction: column;
+     align-items: end;
+  }
+  .logoContainer {
+    width: 30px;
+  }
+  .text{
+    font-size: 10px;
   }
 }

@@ -1,32 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useSweetAlert from '../hooks/useSweetAlert';
 
-const RequestUpdate = () => {
+const FOREST_GREEN = '#228B22';
+
+const RequestUpdate = ({ viewOnly = false }) => {
   const { fireSuccess, fireError } = useSweetAlert();
   const [user, setUser] = useState(null);
   const [reason, setReason] = useState('');
-  const [highlightedFields, setHighlightedFields] = useState({});
+  const [fields, setFields] = useState({});
   const [requestStatus, setRequestStatus] = useState('pending');
 
   useEffect(() => {
     const stored = localStorage.getItem('secretary');
-    if (stored) {
+    const userType = sessionStorage.getItem('userType');
+    const sessionID = sessionStorage.getItem('sessionID');
+
+    const fieldKeys = [
+      'firstName','middleName','lastName','age','sex','birthdate',
+      'civilStatus','occupation','contactNumber'
+    ];
+
+    if (stored && userType && sessionID) {
       const data = JSON.parse(stored);
-      if (Array.isArray(data) && data.length > 0) {
+      if (userType === 'resident') {
         setUser(data[0]);
-        const fields = Object.keys(data[0]).filter(k =>
-          ['firstName','middleName','lastName','age','sex','birthdate','civilStatus','occupation','contactNumber'].includes(k)
-        ).reduce((acc, key) => ({ ...acc, [key]: false }), {});
-        setHighlightedFields(fields);
       }
+      const initialFields = fieldKeys.reduce((acc, key) => ({ ...acc, [key]: data[0]?.[key] || '' }), {});
+      setFields(initialFields);
+    } else {
+      const emptyFields = fieldKeys.reduce((acc, key) => ({ ...acc, [key]: '' }), {});
+      setFields(emptyFields);
     }
   }, []);
 
-  if (!user) return null;
-
-  const handleFieldToggle = (field) => {
-    if (requestStatus === 'denied') return;
-    setHighlightedFields(prev => ({ ...prev, [field]: !prev[field] }));
+  const handleFieldChange = (key, value) => {
+    if (requestStatus === 'denied' || viewOnly) return;
+    setFields(prev => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = () => {
@@ -34,45 +43,105 @@ const RequestUpdate = () => {
       fireError('Error', 'Please provide a valid reason.');
       return;
     }
+
+    const requests = JSON.parse(localStorage.getItem('updateRequests') || '[]');
+    const sessionID = sessionStorage.getItem('sessionID');
+
+    requests.push({
+      requestId: requests.length + 1,
+      userId: Number(sessionID),
+      updatedFields: fields,
+      reason,
+      status: 'pending',
+      date: new Date().toLocaleString()
+    });
+
+    localStorage.setItem('updateRequests', JSON.stringify(requests));
+
     fireSuccess('Request Submitted', 'Your update request has been sent.');
     setRequestStatus('pending');
-    const requests = JSON.parse(localStorage.getItem('updateRequests') || '[]');
-    requests.push({ userId: user.id, highlightedFields, reason, status: 'pending' });
-    localStorage.setItem('updateRequests', JSON.stringify(requests));
+    setReason('');
+  };
+
+  const groups = {
+    "Personal Info": ['firstName','middleName','lastName','age','sex','birthdate','civilStatus'],
+    "Professional Info": ['occupation'],
+    "Contact Info": ['contactNumber']
   };
 
   return (
-    <div className="container my-5">
-      <h3 className="text-success mb-3">Update Request Form</h3>
-      <p>Status: <strong className={`text-${requestStatus==='denied'?'danger':requestStatus==='approved'?'success':'warning'}`}>{requestStatus.toUpperCase()}</strong></p>
-      <div className="card shadow-sm p-4">
-        {Object.keys(highlightedFields).map(field => (
-          <div key={field} className="form-check mb-2">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              checked={highlightedFields[field]}
-              onChange={() => handleFieldToggle(field)}
-              disabled={requestStatus==='denied'}
+    <div
+      style={{ minHeight: '100vh', backgroundColor: '#f4f9f4', padding: '10px' }}
+    >
+      <div className="container-fluid d-flex justify-content-center">
+        <div
+          className="card shadow-lg p-4"
+          style={{ 
+            borderRadius: '15px', 
+            backgroundColor: '#ffffff',
+            width: '100%',
+            maxWidth: '600px',
+            minWidth: '230px'
+          }}
+        >
+          <h3 style={{ color: FOREST_GREEN }} className="mb-3 text-center">
+            Update Request Form
+          </h3>
+          <p className="text-center">
+            Status: 
+            <strong style={{ 
+              color: requestStatus==='denied' ? 'red' : requestStatus==='approved' ? FOREST_GREEN : '#FFA500',
+              marginLeft: '5px'
+            }}>
+              {requestStatus.toUpperCase()}
+            </strong>
+          </p>
+
+          {Object.keys(groups).map((groupName) => (
+            <div key={groupName} className="mb-4">
+              <h5 style={{ color: FOREST_GREEN }} className="mb-3">{groupName}</h5>
+              <div className="row g-2">
+                {groups[groupName].map((key) => (
+                  <div key={key} className="col-12 col-sm-6">
+                    <label className="form-label fw-bold">
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={fields[key]}
+                      onChange={(e) => handleFieldChange(key, e.target.value)}
+                      disabled={requestStatus==='denied' || viewOnly}
+                      style={{ borderColor: FOREST_GREEN, width: '100%' }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div className="mb-3 mt-3">
+            <label className="form-label fw-bold">Reason for Update</label>
+            <textarea
+              className="form-control"
+              rows={3}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              disabled={requestStatus==='denied' || viewOnly}
+              style={{ borderColor: FOREST_GREEN, width: '100%' }}
             />
-            <label className={`form-check-label ${highlightedFields[field] ? 'text-success fw-bold' : ''}`}>
-              {field}: {user[field]}
-            </label>
           </div>
-        ))}
 
-        <div className="mb-3">
-          <label className="form-label">Reason for Update</label>
-          <textarea
-            className="form-control"
-            rows={3}
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            disabled={requestStatus==='denied'}
-          />
+          {!viewOnly && requestStatus !== 'denied' && (
+            <button 
+              className="btn w-100"
+              style={{ backgroundColor: FOREST_GREEN, color: '#fff', fontWeight: 'bold' }}
+              onClick={handleSubmit}
+            >
+              Submit Request
+            </button>
+          )}
         </div>
-
-        <button className="btn btn-success" onClick={handleSubmit} disabled={requestStatus==='denied'}>Submit Request</button>
       </div>
     </div>
   );

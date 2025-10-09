@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import loginCSS from '../css/login.module.css';
 
-const Login = ({ currentUserType}) => {
-  
+const Login = ({ currentUserType }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,6 +15,14 @@ const Login = ({ currentUserType}) => {
     return email.trim() !== '' && password.trim() !== '';
   };
 
+  const generateNumericId = () => {
+    // Optional: auto-increment from previous session IDs
+    const lastId = parseInt(localStorage.getItem('lastSessionId') || '0', 10);
+    const newId = lastId + 1;
+    localStorage.setItem('lastSessionId', newId);
+    return newId;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
@@ -24,8 +31,10 @@ const Login = ({ currentUserType}) => {
       const isAuthenticated = authenticate(email, password);
 
       if (isAuthenticated) {
+        const sessionId = generateNumericId(); // generate numerical ID
         sessionStorage.setItem('userType', userType);
         sessionStorage.setItem('email', email);
+        sessionStorage.setItem('sessionId', sessionId); // store numerical ID
         navigate(`/${userType}/dashboard`);
       } else {
         setError('Invalid credentials. Please try again.');

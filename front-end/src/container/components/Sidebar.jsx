@@ -48,7 +48,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className="overflow-auto text-white d-flex flex-column position-fixed top-0 start-0 vh-100 shadow-lg"
+      className="overflow-auto text-white d-flex flex-column position-fixed top-0 bottom-0 start-0 h-100 shadow-lg"
       style={{
         width: collapsed ? '70px' : '240px',
         transition: 'width 0.3s',

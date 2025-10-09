@@ -13,7 +13,7 @@ const Footer = () => {
         />
       </div>
       <div className={styles.text}>
-        © {new Date().getFullYear()} Municipality of San Juan, Province of Batangas, Brgy. Mabalanoy. All rights reserved.
+        © {new Date().getFullYear()} Municipality of San Juan, Province of Batangas, <br/> Brgy. Mabalanoy. All rights reserved.
       </div>
     </footer>
   )
