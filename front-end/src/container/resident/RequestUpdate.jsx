@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import useSweetAlert from '../hooks/useSweetAlert';
-
-const FOREST_GREEN = '#228B22';
+import useSweetAlert from '../hooks/useSweetAlert'; 
+import color from '../css/login.module.css'
+import background from '../css/login.module.css'
 
 const RequestUpdate = ({ viewOnly = false }) => {
   const { fireSuccess, fireError } = useSweetAlert();
@@ -71,76 +71,78 @@ const RequestUpdate = ({ viewOnly = false }) => {
 
   return (
     <div
-      style={{ minHeight: '100vh', backgroundColor: '#f4f9f4', padding: '10px' }}
+      style={{ minHeight: '100vh', margin: '0 50px 50px 50px' }}
     >
-      <div className="container-fluid d-flex justify-content-center">
+      <div className={`${background['bg-1']} d-flex justify-content-center`}>
         <div
-          className="card shadow-lg p-4"
+          className="card shadow-lg"
           style={{ 
             borderRadius: '15px', 
             backgroundColor: '#ffffff',
             width: '100%',
-            maxWidth: '600px',
-            minWidth: '230px'
+            maxWidth: '100%',
           }}
         >
-          <h3 style={{ color: FOREST_GREEN }} className="mb-3 text-center">
+          <h3 className={`${color['forest-green']} mb-3 text-center rounded-top p-3`}>
             Update Request Form
           </h3>
-          <p className="text-center">
-            Status: 
-            <strong style={{ 
-              color: requestStatus==='denied' ? 'red' : requestStatus==='approved' ? FOREST_GREEN : '#FFA500',
-              marginLeft: '5px'
-            }}>
-              {requestStatus.toUpperCase()}
-            </strong>
-          </p>
 
-          {Object.keys(groups).map((groupName) => (
-            <div key={groupName} className="mb-4">
-              <h5 style={{ color: FOREST_GREEN }} className="mb-3">{groupName}</h5>
-              <div className="row g-2">
-                {groups[groupName].map((key) => (
-                  <div key={key} className="col-12 col-sm-6">
-                    <label className="form-label fw-bold">
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={fields[key]}
-                      onChange={(e) => handleFieldChange(key, e.target.value)}
-                      disabled={requestStatus==='denied' || viewOnly}
-                      style={{ borderColor: FOREST_GREEN, width: '100%' }}
-                    />
-                  </div>
-                ))}
+          <div className='p-3'>
+            <p className="text-center">
+              Status: 
+              <strong style={{ 
+                color: requestStatus==='denied' ? 'red' : requestStatus==='approved' ? color['forest-green'] : '#FFA500',
+                marginLeft: '5px'
+              }}>
+                {requestStatus.toUpperCase()}
+              </strong>
+            </p>
+
+            {Object.keys(groups).map((groupName) => (
+              <div key={groupName} className="mb-4">
+                <h5 style={{ color: color['forest-green'] }} className="mb-3">{groupName}</h5>
+                <div className="row g-2">
+                  {groups[groupName].map((key) => (
+                    <div key={key} className="col-12 col-sm-6">
+                      <label className="form-label fw-bold">
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={fields[key]}
+                        onChange={(e) => handleFieldChange(key, e.target.value)}
+                        disabled={requestStatus==='denied' || viewOnly}
+                        style={{ borderColor: color['forest-green'], width: '100%' }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
+            ))}
+
+            <div className="mb-3 mt-3">
+              <label className="form-label fw-bold">Reason for Update</label>
+              <textarea
+                className="form-control"
+                rows={3}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                disabled={requestStatus==='denied' || viewOnly}
+                style={{ borderColor: color['forest-green'], width: '100%' }}
+              />
             </div>
-          ))}
 
-          <div className="mb-3 mt-3">
-            <label className="form-label fw-bold">Reason for Update</label>
-            <textarea
-              className="form-control"
-              rows={3}
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              disabled={requestStatus==='denied' || viewOnly}
-              style={{ borderColor: FOREST_GREEN, width: '100%' }}
-            />
+            {!viewOnly && requestStatus !== 'denied' && (
+              <button 
+                className="btn w-100"
+                style={{ backgroundColor: color['forest-green'], color: '#fff', fontWeight: 'bold' }}
+                onClick={handleSubmit}
+              >
+                Submit Request
+              </button>
+            )}
           </div>
-
-          {!viewOnly && requestStatus !== 'denied' && (
-            <button 
-              className="btn w-100"
-              style={{ backgroundColor: FOREST_GREEN, color: '#fff', fontWeight: 'bold' }}
-              onClick={handleSubmit}
-            >
-              Submit Request
-            </button>
-          )}
         </div>
       </div>
     </div>

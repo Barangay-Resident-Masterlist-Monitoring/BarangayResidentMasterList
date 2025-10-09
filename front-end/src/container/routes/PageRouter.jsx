@@ -5,13 +5,14 @@ import Resident from "../resident/main.jsx";
 import ResidentLogin from "../resident/login.jsx";
 import ResidentDashboard from "../resident/dashboard.jsx";
 import RegisterResidents from "../resident/RegisterResident.jsx";
-import GenerateReports from "../resident/generate_reports.jsx";
+import GenerateReports from "../resident/GenerateReport.jsx";
 import RequestUpdate from "../resident/RequestUpdate.jsx";
 
 import Secretary from "../secretary/main.jsx";
 import SecretaryLogin from "../secretary/login.jsx";
 import SecretaryDashboard from "../secretary/dashboard.jsx";
 import ManageResidentsAndOfficial from "../secretary/ManagerUser.jsx"; 
+import GenerateReportsForSecretary from "../secretary/GenerateReport.jsx";
 
 const PageRouter = () => {
   return (
@@ -27,7 +28,7 @@ const PageRouter = () => {
           <Route path="dashboard" element={<ResidentDashboard />} />
           <Route path="register-residents" element={<RegisterResidents />} />
           <Route path="generate-report" element={<GenerateReports />} />
-          <Route index element={<Navigate to="dashboard" replace />} />
+
         </Route>
 
         <Route path="/secretary" element={<Secretary />}>
@@ -35,7 +36,8 @@ const PageRouter = () => {
 
           <Route path="dashboard" element={<SecretaryDashboard />} />
           <Route path="manage-residents" element={<ManageResidentsAndOfficial />} />
-          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="generate-report" element={<GenerateReportsForSecretary />} />
+  
         </Route>
 
         <Route path="*" element={<Navigate to="/resident/login" replace />} />
