@@ -2,14 +2,14 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import ProfileView from "../components/ProfileView.jsx";
 
 import Resident from "../resident/main.jsx";
-import ResidentLogin from "../resident/Login.jsx";
+import ResidentLogin from "../resident/login.jsx";
 import ResidentDashboard from "../resident/Dashboard.jsx";
 import RegisterResidents from "../resident/RegisterResident.jsx";
 import GenerateReports from "../resident/GenerateReport.jsx";
 import RequestUpdate from "../resident/RequestUpdate.jsx";
 
 import Secretary from "../secretary/main.jsx";
-import SecretaryLogin from "../secretary/Login.jsx";
+import SecretaryLogin from "../secretary/login.jsx";
 import SecretaryDashboard from "../secretary/Dashboard.jsx";
 import ManageResidentsAndOfficial from "../secretary/ManagerUser.jsx"; 
 import GenerateReportsForSecretary from "../secretary/GenerateReport.jsx";
