@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import useSweetAlert from '../hooks/useSweetAlert';
 
-const dwwdw d ddw dw  = () => {
+const RequestUpdate = () => {
   const { fireSuccess, fireError } = useSweetAlert();
   const [user, setUser] = useState(null);
   const [reason, setReason] = useState('');

@@ -6,7 +6,7 @@ import ResidentLogin from "../resident/login.jsx";
 import ResidentDashboard from "../resident/dashboard.jsx";
 import RegisterResidents from "../resident/RegisterResident.jsx";
 import GenerateReports from "../resident/generate_reports.jsx";
-import RequestUpdate from "../resident/requestUpdate.jsx";
+import RequestUpdate from "../resident/RequestUpdate.jsx";
 
 import Secretary from "../secretary/main.jsx";
 import SecretaryLogin from "../secretary/login.jsx";
