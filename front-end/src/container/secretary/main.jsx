@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import MainContent from '../components/MainContent';
 import SideBar from '../components/Sidebar';
 
-const Main = () => {
+const main = () => {
 
   return (
     <div>
@@ -15,4 +15,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default main;
