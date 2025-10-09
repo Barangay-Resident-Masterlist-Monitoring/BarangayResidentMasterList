@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import styles from '../css/ProfileView.module.css';
+import styles from '../css/profileView.module.css';
 import background from '../css/login.module.css';
 
 const ProfileView = () => {
