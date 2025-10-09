@@ -24,7 +24,7 @@ ChartJS.register(
   Title
 );
 
-const Dashboard = () => {
+const dashboard = () => {
   const sexData = {
     labels: ['Male', 'Female'],
     datasets: [
@@ -74,7 +74,7 @@ const Dashboard = () => {
       <div className="container">
 
         <h2 className="mb-4 fw-semibold text-center" style={{ color: '#222' }}>
-          Barangay Mabalanoy - Resident Demographics Dashboard
+          Barangay Mabalanoy - Resident Demographics dashboard
         </h2>
 
         <div className="row g-3 mb-6">
@@ -119,7 +119,7 @@ const Dashboard = () => {
                 {[
                   {
                     icon: <FaChartPie color="#4A90E2" size={20} />,
-                    title: 'Dashboard Overview',
+                    title: 'dashboard Overview',
                     desc: 'Visual summary of demographic data with charts for population by sex, age, occupation, and civil status.'
                   },
                   {
@@ -135,7 +135,7 @@ const Dashboard = () => {
                   {
                     icon: <FaCompass color="#4A90E2" size={20} />,
                     title: 'Navigation Tips',
-                    desc: 'Use sidebar/top menu for Dashboard, Profile, Notifications. Click bell icon for updates. Profile icon to logout or settings.'
+                    desc: 'Use sidebar/top menu for dashboard, Profile, Notifications. Click bell icon for updates. Profile icon to logout or settings.'
                   },
                   {
                     icon: <FaLock color="#4A90E2" size={20} />,
@@ -164,5 +164,5 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default dashboard;
     

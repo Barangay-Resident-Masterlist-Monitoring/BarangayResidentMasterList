@@ -24,7 +24,7 @@ ChartJS.register(
   Title
 );
 
-const Dashboard = () => {
+const dashboard = () => {
   const sexData = {
     labels: ['Male', 'Female'],
     datasets: [
@@ -164,4 +164,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default dashboard;
