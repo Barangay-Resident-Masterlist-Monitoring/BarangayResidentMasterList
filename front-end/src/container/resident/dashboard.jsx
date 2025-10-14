@@ -37,7 +37,7 @@ const dashboard = () => {
   };
 
   const ageGroupData = {
-    labels: ['0-17', '18-35', '36-60', '60+'],
+    labels: ['1-17', '18-35', '36-60', '60+'],
     datasets: [
       {
         label: 'Population by Age Group',

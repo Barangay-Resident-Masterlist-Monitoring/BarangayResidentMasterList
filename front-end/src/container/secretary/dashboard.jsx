@@ -37,7 +37,7 @@ const dashboard = () => {
   };
 
   const ageGroupData = {
-    labels: ['0-17', '18-35', '36-60', '60+'],
+    labels: ['1-17', '18-35', '36-60', '60+'],
     datasets: [
       {
         label: 'Population by Age Group',
@@ -70,7 +70,7 @@ const dashboard = () => {
   };
 
   return (
-    <div className={`${background['bg-1']} py-5`}>
+    <div className={`${background['bg-1']} vh-100 py-5`}>
       <div className="container">
 
         <h2 className="mb-4 fw-semibold text-center" style={{ color: '#222' }}>

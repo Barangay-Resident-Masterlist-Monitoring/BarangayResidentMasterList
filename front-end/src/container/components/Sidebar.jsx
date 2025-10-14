@@ -6,6 +6,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaUserPlus,
+  FaWpforms 
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import mabalanoyLogo from '../images/mabalanoy.png';
@@ -16,6 +17,7 @@ const allNavItems = [
   { icon: <FaUserPlus />, label: 'Register Resident', path: 'register-residents' },
   { icon: <FaChartBar />, label: 'Generate Reports', path: 'generate-report' },
   { icon: <FaUserPlus />, label: 'Request Update', path: 'request-update' },
+  { icon: <FaWpforms />, label: 'Approval Form', path: 'approval-form' },
 ];
 
 const Sidebar = () => {
@@ -37,7 +39,7 @@ const Sidebar = () => {
     if (userType === 'resident') {
       return ['Dashboard', 'Register Resident', 'Generate Reports', 'Request Update'].includes(item.label);
     } else if (userType === 'secretary') {
-      return ['Dashboard', 'Manage Residents and Officials', 'Generate Reports'].includes(item.label);
+      return ['Dashboard', 'Manage Residents and Officials', 'Generate Reports', 'Approval Form'].includes(item.label);
     }
     return false;
   });

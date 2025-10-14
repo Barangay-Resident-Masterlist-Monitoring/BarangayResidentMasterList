@@ -211,7 +211,7 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
   if (userRole === 'resident') {
     if (!currentResident) {
       return (
-        <div className={`container my-5 ${styles.bg}`}>
+        <div className={`container h-100 my-5 ${styles.bg}`}>
           <h2 className={`mb-4 ${styles['forest-green-text']}`}>Resident Registration</h2>
           <button className={`btn mb-3 ${styles['forest-green']}`} onClick={() => openModal()}>
             Register Your Account
@@ -407,7 +407,7 @@ const RegisterResident = ({ userRole = 'resident', currentUserId = null }) => {
 
     // Resident profile view
     return (
-      <div className={`container my-5 ${styles.bg}`}>
+      <div className={`container h-100 my-5 ${styles.bg}`}>
         <h2 className={`mb-4 ${styles['forest-green-text']}`}>Resident Profile</h2>
         <div className="card p-4">
           <img

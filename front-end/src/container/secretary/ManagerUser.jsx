@@ -190,7 +190,7 @@ const ManageUser = () => {
   ];
 
   return (
-    <div className={`container my-5 ${styles.bg}`}>
+    <div className={`container h-100 my-5 ${styles.bg}`}>
       <h2 className={`mb-4 ${styles['forest-green-text']}`}>Manage Residents and Officials</h2>
 
       <div className="d-flex gap-5 justify-content-between align-items-center mb-3">

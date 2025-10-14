@@ -11,6 +11,7 @@ import RequestUpdate from "../resident/RequestUpdate.jsx";
 import Secretary from "../secretary/main.jsx";
 import SecretaryLogin from "../secretary/login.jsx";
 import SecretaryDashboard from "../secretary/dashboard.jsx";
+import ApprovalForm from "../secretary/ApprovalForm.jsx";
 import ManageResidentsAndOfficial from "../secretary/ManagerUser.jsx"; 
 import GenerateReportsForSecretary from "../secretary/GenerateReport.jsx";
 
@@ -23,9 +24,9 @@ const PageRouter = () => {
 
         <Route path="/resident" element={<Resident />}>
           <Route path="profile-view" element={<ProfileView />} />
+          <Route path="dashboard" element={<ResidentDashboard />} />
 
           <Route path="request-update" element={<RequestUpdate />} />
-          <Route path="dashboard" element={<ResidentDashboard />} />
           <Route path="register-residents" element={<RegisterResidents />} />
           <Route path="generate-report" element={<GenerateReports />} />
 
@@ -33,8 +34,9 @@ const PageRouter = () => {
 
         <Route path="/secretary" element={<Secretary />}>
           <Route path="profile-view" element={<ProfileView />} />
-
           <Route path="dashboard" element={<SecretaryDashboard />} />
+
+          <Route path="approval-form" element={<ApprovalForm />} />
           <Route path="manage-residents" element={<ManageResidentsAndOfficial />} />
           <Route path="generate-report" element={<GenerateReportsForSecretary />} />
   
