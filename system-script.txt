@@ -4,7 +4,7 @@ Modules
   Dashboard
  Residents - one time Registration for residents 
 • Barangay Officials - Photo, name and postion (for viewing purposes) 
-• Reports - can only view the population related reports 
+Reports - can only view the population related reports 
  Request Form (if they want changes in their registration information) - they can highlight what is needed to be updated (requires valid reason 
 to shows to help secretary to decide whether to accept it or not) When the request is denied, they can't edit.
 
@@ -15,7 +15,7 @@ Modules
  Dashboard 
  Residents - table view (can edit, update and delete) Table content (name, age, sex, civil status, occupation and contact number)
  Barangay Officials - can edit, update and delete the barangay officials presented on the resident view 
-• Report - will generate reports based on the table presented (shows the report content before generating) must be reflected on the given table 
+Report - will generate reports based on the table presented (shows the report content before generating) must be reflected on the given table 
  Approval Form -  allows the resident to register again for changes (one time registration again for the resident view)
 • Review - The denied (not approved) will be put here for further review 
 

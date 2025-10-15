@@ -1,0 +1,10 @@
+
+.reportWrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.reportContainer {
+  max-height: 400px;
+  overflow-y: auto;
+}

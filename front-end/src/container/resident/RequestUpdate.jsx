@@ -41,13 +41,11 @@ const RequestUpdate = ({ viewOnly = false }) => {
   useEffect(() => {
     const currUserId = localStorage.getItem('currentUserId');
     if (!currUserId) {
-      fireError('Error', 'No current user id found.');
       return;
     }
     const users = JSON.parse(localStorage.getItem('users')) || [];
     const user = users.find(u => String(u.id) === String(currUserId));
     if (!user) {
-      fireError('Error', 'User not found.');
       return;
     }
     setUserFound(true);

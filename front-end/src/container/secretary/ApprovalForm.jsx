@@ -47,26 +47,25 @@ const ApprovalForm = () => {
       localStorage.setItem('users', JSON.stringify(updatedUsers));
     }
 
-    const sec = JSON.parse(localStorage.getItem('secretary')) || {};
+    const sec = JSON.parse(localStorage.getItem('notification')) || {};
     const notifs = sec.notifications || [];
     notifs.push({
       message: `Request ${requestId} has been ${status.toUpperCase()}`,
       timestamp: new Date().toLocaleString()
     });
-    localStorage.setItem('secretary', JSON.stringify({ ...sec, notifications: notifs }));
+    localStorage.setItem('notification', JSON.stringify({ ...sec, notifications: notifs }));
 
     fireSuccess('Updated', `Request ${requestId} marked as ${status}`);
   };
 
   return (
     <div style={{ minHeight: '100vh', margin: '0 50px 50px 50px' }}>
-      <div className={`${background['bg-1']} d-flex justify-content-center`}>
-        <div className="card shadow-lg"
-          style={{ borderRadius: '15px', backgroundColor: '#ffffff', width: '100%' }}>
+      <div className={`${background['bg-1']} d-flex justify-content-center overflow-y`}>
+        <div className="card shadow-lg">
           <h3 className={`${color['forest-green']} mb-3 text-center rounded-top p-3`}>Update Requests</h3>
           <div className="table-responsive p-3">
             <table className="table table-bordered table-hover">
-              <thead className="table-success text-center">
+               <thead className={'table-success text-center align-center'}>
                 <tr>
                   <th>Request ID</th>
                   <th>User ID</th>
