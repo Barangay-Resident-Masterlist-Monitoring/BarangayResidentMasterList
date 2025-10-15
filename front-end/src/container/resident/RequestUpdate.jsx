@@ -23,6 +23,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
   const [showOtherOccupation, setShowOtherOccupation] = useState(false);
   const [imageData, setImageData] = useState(null);
   const [userFound, setUserFound] = useState(false);
+  const [hasPendingRequest, setHasPendingRequest] = useState(false);
 
   const modFieldOptions = [
     { name: 'firstName', id: 'firstName' },
@@ -63,15 +64,29 @@ const RequestUpdate = ({ viewOnly = false }) => {
       otherOccupation: user.otherOccupation || '',
       contactNumber: user.contactNumber || ''
     });
-    setShowOtherOccupation(user.occupation !== 'Student' && user.occupation !== 'Retired' && user.occupation !== '');
+
+    setShowOtherOccupation(
+      user.occupation !== 'Student' &&
+      user.occupation !== 'Retired' &&
+      user.occupation !== ''
+    );
+
+    // check if there is a pending request for this user
+    const requests = JSON.parse(localStorage.getItem('updateRequests')) || [];
+    const pending = requests.some(r =>
+      String(r.userId) === String(currUserId) &&
+      r.status === 'pending'
+    );
+    setHasPendingRequest(pending);
   }, []);
 
   const handleFieldChange = (key, value) => {
-    if (viewOnly) return;
+    if (viewOnly || hasPendingRequest) return;
     setFields(prev => ({ ...prev, [key]: value }));
   };
 
   const handleImageUpload = e => {
+    if (viewOnly || hasPendingRequest) return;
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -82,6 +97,10 @@ const RequestUpdate = ({ viewOnly = false }) => {
   const handleSubmit = () => {
     if (!userFound) {
       fireError('Error', 'Cannot submit: user not found.');
+      return;
+    }
+    if (hasPendingRequest) {
+      fireError('Error', 'You already have a pending update request.');
       return;
     }
     if (modifiedFields.length === 0) {
@@ -110,15 +129,20 @@ const RequestUpdate = ({ viewOnly = false }) => {
     setReason('');
     setModifiedFields([]);
     setImageData(null);
+    setHasPendingRequest(true);
   };
 
   return (
     <div style={{ minHeight: '100vh', margin: '0 50px 50px 50px' }}>
       <div className={`${background['bg-1']} d-flex justify-content-center`}>
-        <div className="card shadow-lg" style={{ borderRadius: '15px', backgroundColor: '#fff', width: '100%' }}>
-          <h3 className={`${color['forest-green']} mb-3 text-center rounded-top p-3`}>Update Request Form</h3>
+        <div className="card shadow-lg"
+          style={{ borderRadius: '15px', backgroundColor: '#ffffff', width: '100%' }}>
+          <h3 className={`${color['forest-green']} mb-3 text-center rounded-top p-3`}>
+            Update Request Form
+          </h3>
           <div className="p-3">
             <div className="row g-2">
+              {/* input fields */}
               <div className="col-md-6 mb-3">
                 <label className="form-label fw-bold">First Name</label>
                 <input
@@ -126,7 +150,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-control"
                   value={fields.firstName}
                   onChange={e => handleFieldChange('firstName', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 />
               </div>
               <div className="col-md-6 mb-3">
@@ -136,7 +160,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-control"
                   value={fields.middleName}
                   onChange={e => handleFieldChange('middleName', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 />
               </div>
               <div className="col-md-6 mb-3">
@@ -146,7 +170,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-control"
                   value={fields.lastName}
                   onChange={e => handleFieldChange('lastName', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 />
               </div>
               <div className="col-md-6 mb-3">
@@ -156,7 +180,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-control"
                   value={fields.age}
                   onChange={e => handleFieldChange('age', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 />
               </div>
               <div className="col-md-6 mb-3">
@@ -165,7 +189,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-select"
                   value={fields.sex}
                   onChange={e => handleFieldChange('sex', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 >
                   <option value="">Select Sex</option>
                   <option value="Male">Male</option>
@@ -179,7 +203,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-control"
                   value={fields.birthdate}
                   onChange={e => handleFieldChange('birthdate', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 />
               </div>
               <div className="col-md-6 mb-3">
@@ -188,7 +212,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-select"
                   value={fields.civilStatus}
                   onChange={e => handleFieldChange('civilStatus', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 >
                   <option value="">Select Civil Status</option>
                   <option value="Single">Single</option>
@@ -203,16 +227,17 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-select"
                   value={showOtherOccupation ? 'Other' : fields.occupation}
                   onChange={e => {
-                    if (e.target.value === 'Other') {
+                    const val = e.target.value;
+                    if (val === 'Other') {
                       setShowOtherOccupation(true);
                       handleFieldChange('occupation', '');
                     } else {
                       setShowOtherOccupation(false);
-                      handleFieldChange('occupation', e.target.value);
+                      handleFieldChange('occupation', val);
                       handleFieldChange('otherOccupation', '');
                     }
                   }}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 >
                   <option value="">Select Occupation</option>
                   <option value="Student">Student</option>
@@ -226,7 +251,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                     placeholder="Specify occupation"
                     value={fields.occupation}
                     onChange={e => handleFieldChange('occupation', e.target.value)}
-                    disabled={viewOnly}
+                    disabled={viewOnly || hasPendingRequest}
                   />
                 )}
               </div>
@@ -237,7 +262,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                   className="form-control"
                   value={fields.contactNumber}
                   onChange={e => handleFieldChange('contactNumber', e.target.value)}
-                  disabled={viewOnly}
+                  disabled={viewOnly || hasPendingRequest}
                 />
               </div>
             </div>
@@ -249,9 +274,15 @@ const RequestUpdate = ({ viewOnly = false }) => {
                 className="form-control"
                 accept="image/*"
                 onChange={handleImageUpload}
-                disabled={viewOnly}
+                disabled={viewOnly || hasPendingRequest}
               />
-              {imageData && <img src={imageData} alt="Preview" style={{ maxWidth: '200px', marginTop: '10px' }} />}
+              {imageData && (
+                <img
+                  src={imageData}
+                  alt="Preview"
+                  style={{ maxWidth: '200px', marginTop: '10px' }}
+                />
+              )}
             </div>
 
             <div className="mb-3">
@@ -263,7 +294,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                 onRemove={setModifiedFields}
                 displayValue="name"
                 showCheckbox
-                disable={viewOnly}
+                disable={viewOnly || hasPendingRequest}
               />
             </div>
 
@@ -274,7 +305,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
                 rows={3}
                 value={reason}
                 onChange={e => setReason(e.target.value)}
-                disabled={viewOnly}
+                disabled={viewOnly || hasPendingRequest}
               />
             </div>
 
@@ -283,8 +314,9 @@ const RequestUpdate = ({ viewOnly = false }) => {
                 className="btn w-100"
                 style={{ backgroundColor: color['forest-green'], color: '#fff', fontWeight: 'bold' }}
                 onClick={handleSubmit}
+                disabled={hasPendingRequest}
               >
-                Submit Request
+                {hasPendingRequest ? 'Pending Request Exists' : 'Submit Request'}
               </button>
             )}
           </div>

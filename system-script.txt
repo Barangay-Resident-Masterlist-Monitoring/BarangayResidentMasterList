@@ -1,28 +1,28 @@
 Resident side (User Level)
 
 Modules
-• Dashboard
+  Dashboard
  Residents - one time Registration for residents 
 • Barangay Officials - Photo, name and postion (for viewing purposes) 
 • Reports - can only view the population related reports 
-• Request Form (if they want changes in their registration information) - they can highlight what is needed to be updated (requires valid reason 
+ Request Form (if they want changes in their registration information) - they can highlight what is needed to be updated (requires valid reason 
 to shows to help secretary to decide whether to accept it or not) When the request is denied, they can't edit.
 
 
 Secretary side (Admin Level)
 
 Modules 
-• Dashboard 
+ Dashboard 
  Residents - table view (can edit, update and delete) Table content (name, age, sex, civil status, occupation and contact number)
  Barangay Officials - can edit, update and delete the barangay officials presented on the resident view 
 • Report - will generate reports based on the table presented (shows the report content before generating) must be reflected on the given table 
-• Approval Form -  allows the resident to register again for changes (one time registration again for the resident view)
+ Approval Form -  allows the resident to register again for changes (one time registration again for the resident view)
 • Review - The denied (not approved) will be put here for further review 
 
 
 Additional:
 
-• When the resident register on the user level, it must be reflected on the table given in the admin level
+ When the resident register on the user level, it must be reflected on the table given in the admin level
 • since the both level can create account, does it need to show some profile view after log in without register? (only shows the email that the user used in log in) 
 • Forgot Password - requested to admin side 
 • since the secretary is the only one can add for barangay officials, reflect it on the table too when she add the barangay officials 

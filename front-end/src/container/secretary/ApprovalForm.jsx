@@ -19,6 +19,12 @@ const ApprovalForm = () => {
       return;
     }
 
+    const updatedRequests = requests.map(r =>
+      r.requestId === requestId ? { ...r, status } : r
+    );
+    setRequests(updatedRequests);
+    localStorage.setItem('updateRequests', JSON.stringify(updatedRequests));
+
     if (status === 'approved') {
       const users = JSON.parse(localStorage.getItem('users')) || [];
       const updatedUsers = users.map(u => {
@@ -28,7 +34,6 @@ const ApprovalForm = () => {
             if (field === 'image') {
               newUser.photoURL = req.image || newUser.photoURL;
             } else if (field === 'occupation') {
-              // Handle occupation + otherOccupation fields
               newUser.occupation = req.updatedFields.occupation || newUser.occupation;
               newUser.otherOccupation = req.updatedFields.otherOccupation || '';
             } else {
@@ -42,19 +47,13 @@ const ApprovalForm = () => {
       localStorage.setItem('users', JSON.stringify(updatedUsers));
     }
 
-    const updatedRequests = requests.map(r =>
-      r.requestId === requestId ? { ...r, status } : r
-    );
-    setRequests(updatedRequests);
-    localStorage.setItem('updateRequests', JSON.stringify(updatedRequests));
-
     const sec = JSON.parse(localStorage.getItem('secretary')) || {};
-    const notifications = sec.notifications || [];
-    notifications.push({
+    const notifs = sec.notifications || [];
+    notifs.push({
       message: `Request ${requestId} has been ${status.toUpperCase()}`,
       timestamp: new Date().toLocaleString()
     });
-    localStorage.setItem('secretary', JSON.stringify({ ...sec, notifications }));
+    localStorage.setItem('secretary', JSON.stringify({ ...sec, notifications: notifs }));
 
     fireSuccess('Updated', `Request ${requestId} marked as ${status}`);
   };
@@ -62,7 +61,8 @@ const ApprovalForm = () => {
   return (
     <div style={{ minHeight: '100vh', margin: '0 50px 50px 50px' }}>
       <div className={`${background['bg-1']} d-flex justify-content-center`}>
-        <div className="card shadow-lg" style={{ borderRadius: '15px', backgroundColor: '#fff', width: '100%' }}>
+        <div className="card shadow-lg"
+          style={{ borderRadius: '15px', backgroundColor: '#ffffff', width: '100%' }}>
           <h3 className={`${color['forest-green']} mb-3 text-center rounded-top p-3`}>Update Requests</h3>
           <div className="table-responsive p-3">
             <table className="table table-bordered table-hover">
@@ -107,11 +107,14 @@ const ApprovalForm = () => {
                       <td>
                         {req.image ? (
                           <img src={req.image} alt="Uploaded" style={{ maxWidth: '100px' }} />
-                        ) : (
-                          'No Image'
-                        )}
+                        ) : 'No Image'}
                       </td>
-                      <td className={`text-center ${req.status === 'approved' ? 'text-success' : req.status === 'rejected' ? 'text-danger' : ''}`}>
+                      <td style={{
+                        color:
+                          req.status === 'approved' ? 'green' :
+                          req.status === 'rejected' ? 'red' :
+                          '#FFA500'
+                      }}>
                         {req.status}
                       </td>
                       <td className="text-center">
@@ -120,19 +123,15 @@ const ApprovalForm = () => {
                             <button
                               className="btn btn-success btn-sm me-2"
                               onClick={() => handleStatusUpdate(req.requestId, 'approved')}
-                            >
-                              Approve
-                            </button>
+                            >Approve</button>
                             <button
                               className="btn btn-danger btn-sm"
                               onClick={() => handleStatusUpdate(req.requestId, 'rejected')}
-                            >
-                              Reject
-                            </button>
+                            >Reject</button>
                           </>
                         )}
                         {(req.status === 'approved' || req.status === 'rejected') && (
-                          <span>No actions</span>
+                          <span>No action</span>
                         )}
                       </td>
                     </tr>
