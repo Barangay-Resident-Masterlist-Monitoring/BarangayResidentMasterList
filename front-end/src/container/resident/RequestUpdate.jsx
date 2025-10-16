@@ -6,6 +6,7 @@ import background from '../css/login.module.css';
 
 const RequestUpdate = ({ viewOnly = false }) => {
   const { fireSuccess, fireError } = useSweetAlert();
+
   const [fields, setFields] = useState({
     firstName: '',
     middleName: '',
@@ -18,12 +19,16 @@ const RequestUpdate = ({ viewOnly = false }) => {
     otherOccupation: '',
     contactNumber: ''
   });
+
   const [reason, setReason] = useState('');
   const [modifiedFields, setModifiedFields] = useState([]);
   const [showOtherOccupation, setShowOtherOccupation] = useState(false);
   const [imageData, setImageData] = useState(null);
   const [userFound, setUserFound] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
+
+  const [residents, setResidents] = useState([]);
+  const [selectedResident, setSelectedResident] = useState(null);
 
   const modFieldOptions = [
     { name: 'firstName', id: 'firstName' },
@@ -39,15 +44,16 @@ const RequestUpdate = ({ viewOnly = false }) => {
   ];
 
   useEffect(() => {
-    const currUserId = localStorage.getItem('currentUserId');
-    if (!currUserId) {
-      return;
-    }
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(u => String(u.id) === String(currUserId));
-    if (!user) {
-      return;
-    }
+    const residentsOnly = users.filter(user => user.role === 'Resident');
+    setResidents(residentsOnly);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedResident) return;
+
+    const user = selectedResident;
+
     setUserFound(true);
 
     setFields({
@@ -69,14 +75,13 @@ const RequestUpdate = ({ viewOnly = false }) => {
       user.occupation !== ''
     );
 
-    // check if there is a pending request for this user
     const requests = JSON.parse(localStorage.getItem('updateRequests')) || [];
     const pending = requests.some(r =>
-      String(r.userId) === String(currUserId) &&
+      String(r.userId) === String(user.id) &&
       r.status === 'pending'
     );
     setHasPendingRequest(pending);
-  }, []);
+  }, [selectedResident]);
 
   const handleFieldChange = (key, value) => {
     if (viewOnly || hasPendingRequest) return;
@@ -93,12 +98,12 @@ const RequestUpdate = ({ viewOnly = false }) => {
   };
 
   const handleSubmit = () => {
-    if (!userFound) {
-      fireError('Error', 'Cannot submit: user not found.');
+    if (!selectedResident) {
+      fireError('Error', 'Please select a resident to update.');
       return;
     }
     if (hasPendingRequest) {
-      fireError('Error', 'You already have a pending update request.');
+      fireError('Error', 'This resident already has a pending update request.');
       return;
     }
     if (modifiedFields.length === 0) {
@@ -109,12 +114,12 @@ const RequestUpdate = ({ viewOnly = false }) => {
       fireError('Error', 'Please provide a reason for update.');
       return;
     }
-    const currUserId = localStorage.getItem('currentUserId');
+
     const updateRequests = JSON.parse(localStorage.getItem('updateRequests')) || [];
     const modifiedIds = modifiedFields.map(f => f.id);
     const newRequest = {
       requestId: Date.now(),
-      userId: String(currUserId),
+      userId: String(selectedResident.id),
       updatedFields: { ...fields },
       modifiedFields: modifiedIds,
       image: imageData,
@@ -122,6 +127,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
       status: 'pending',
       date: new Date().toLocaleString()
     };
+
     localStorage.setItem('updateRequests', JSON.stringify([...updateRequests, newRequest]));
     fireSuccess('Submitted', 'Update request submitted.');
     setReason('');
@@ -138,9 +144,43 @@ const RequestUpdate = ({ viewOnly = false }) => {
           <h3 className={`${color['forest-green']} mb-3 text-center rounded-top p-3`}>
             Update Request Form
           </h3>
+
           <div className="p-3">
+
+            {/* RESIDENT SELECTION */}
+            <div className="mb-3">
+              <label className="form-label fw-bold">Select Resident</label>
+              <Multiselect
+                options={residents}
+                selectedValues={selectedResident ? [selectedResident] : []}
+                onSelect={(selectedList) => setSelectedResident(selectedList[0])}
+                onRemove={() => {
+                  setSelectedResident(null);
+                  setUserFound(false);
+                  setHasPendingRequest(false);
+                  setFields({
+                    firstName: '',
+                    middleName: '',
+                    lastName: '',
+                    age: '',
+                    sex: '',
+                    birthdate: '',
+                    civilStatus: '',
+                    occupation: '',
+                    otherOccupation: '',
+                    contactNumber: ''
+                  });
+                }}
+                displayValue="firstName"
+                selectionLimit={1}
+                placeholder="Select Resident"
+                showCheckbox
+                disable={viewOnly}
+              />
+            </div>
+
+            {/* input fields */}
             <div className="row g-2">
-              {/* input fields */}
               <div className="col-md-6 mb-3">
                 <label className="form-label fw-bold">First Name</label>
                 <input
@@ -308,14 +348,13 @@ const RequestUpdate = ({ viewOnly = false }) => {
             </div>
 
             {!viewOnly && (
-              <button
-                className="btn w-100"
-                style={{ backgroundColor: color['forest-green'], color: '#fff', fontWeight: 'bold' }}
-                onClick={handleSubmit}
-                disabled={hasPendingRequest}
-              >
-                {hasPendingRequest ? 'Pending Request Exists' : 'Submit Request'}
-              </button>
+                <button
+                  className={`btn w-100 bg- ${color['forest-green']}`}
+                  onClick={handleSubmit}
+                  disabled={hasPendingRequest}
+                >
+                  {hasPendingRequest ? 'Pending Request Exists' : 'Submit Request'}
+                </button>
             )}
           </div>
         </div>
