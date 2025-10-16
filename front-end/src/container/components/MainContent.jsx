@@ -20,11 +20,10 @@ const MainContent = () => {
 
   return (
     <main
-    style={
-        sidebarToggled === 'true'
-          ? { paddingLeft: '5.5rem', transition: 'padding-left 0.1s' }
-          : { paddingLeft: '16.5rem', transition: 'padding-left 0.1s'}
-      }>
+      style={{
+      paddingLeft: sidebarToggled === 'true' ? '5.5rem' : '16.5rem',
+      transition: 'padding-left 0.1s',
+    }}>
       <Outlet />
     </main>
   );

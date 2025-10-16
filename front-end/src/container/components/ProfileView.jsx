@@ -6,7 +6,7 @@ const ProfileView = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem('secretary');
+    const stored = localStorage.getItem('users');
     if (stored) {
       const data = JSON.parse(stored);
       if (Array.isArray(data) && data.length > 0) {
@@ -18,7 +18,7 @@ const ProfileView = () => {
   if (!user) return null;
 
   return (
-    <div className={`${background['bg-1']} container vh-100 d-flex justify-content-center align-items-center`}>
+    <div className={`bg- ${background['bg-1']} container vh-100 d-flex justify-content-center align-items-center`}>
       <div className={`card ${styles.profileCard} col-md-6 col-lg-4`}>
         <div className="text-center mb-4">
           <img
@@ -55,11 +55,6 @@ const ProfileView = () => {
           </li>
         </ul>
 
-        <div className="text-center mt-4">
-          <button className={`btn ${styles.btnForest} btn-lg`}>
-            Edit Profile
-          </button>
-        </div>
       </div>
     </div>
   );

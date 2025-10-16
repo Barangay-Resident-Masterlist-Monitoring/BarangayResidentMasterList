@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import ProfileView from "../components/ProfileView.jsx";
+import Register from '../components/Register.jsx'
 
 import Resident from "../resident/main.jsx";
 import ResidentLogin from "../resident/login.jsx";
@@ -21,13 +22,14 @@ const PageRouter = () => {
       <Routes>
         <Route path="/resident/login" element={<ResidentLogin />} />
         <Route path="/secretary/login" element={<SecretaryLogin />} />
+        <Route path="/register" element={<Register />} />
 
         <Route path="/resident" element={<Resident />}>
           <Route path="profile-view" element={<ProfileView />} />
           <Route path="dashboard" element={<ResidentDashboard />} />
 
           <Route path="request-update" element={<RequestUpdate />} />
-          <Route path="register-residents" element={<RegisterResidents />} />
+          <Route path="register-residents" element={<RegisterResidents  />} />
           <Route path="generate-report" element={<GenerateReports />} />
 
         </Route>

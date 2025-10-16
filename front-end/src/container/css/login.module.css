@@ -38,3 +38,15 @@
 }
 
 
+.custom-card {
+  min-height: 600px;
+  max-height: 900px;
+  overflow-y: auto;
+}
+
+@media (max-width: 767.98px) {
+  .custom-card {
+    min-height: auto !important;
+    max-height: none !important;
+  }
+}

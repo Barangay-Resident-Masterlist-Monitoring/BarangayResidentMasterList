@@ -31,7 +31,7 @@ const GenerateReport = () => {
 
   return (
     <div className={`${background['bg-1']} d-flex justify-content-center align-items-start py-5 min-vh-100`}>
-      <div className="shadow-lg bg-white bg-opacity-75 rounded-3 w-100" style={{ maxWidth: '900px' }}>
+      <div className="shadow-lg bg-white bg-opacity-75 rounded-3 w-100 text-nowrap" style={{ maxWidth: '900px' }}>
         <h2 className={`text-center rounded-top p-3 ${color['forest-green']}`}>Secretary Reports</h2>
 
         <div className="d-flex flex-column align-items-center gap-3 px-3 mb-3">

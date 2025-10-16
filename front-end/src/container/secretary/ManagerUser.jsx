@@ -32,7 +32,7 @@ const ManageUser = () => {
 
   const getMaxBirthdate = () => {
     const today = new Date();
-    today.setFullYear(today.getFullYear() - 18);
+    today.setFullYear(today.getFullYear() - 1);
     return today.toISOString().split('T')[0];
   };
 
@@ -76,7 +76,7 @@ const ManageUser = () => {
         civilStatus: '',
         occupation: '',
         contactNumber: '',
-        role: 'Secretary',
+        role: '',
         photo: null,
         photoURL: '',
       });
@@ -344,7 +344,7 @@ const ManageUser = () => {
                       type="date"
                       className="form-control"
                       name="birthdate"
-                      value={formData.birthdate ?? ''}
+                      value={formData.birthdate <= 0 ? 'Age': `${formData.birthdate} year/s old`}
                       onChange={handleChange}
                       required
                       max={getMaxBirthdate()}

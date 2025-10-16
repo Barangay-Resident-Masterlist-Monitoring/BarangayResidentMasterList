@@ -15,8 +15,8 @@ const Header = () => {
 
 const backward = () => {
   navigate(`/${sessionStorage.getItem('userType')}/login`);
+  localStorage.removeItem('lastUserId');
   sessionStorage.clear();
-  localStorage.clear();
 };
 
 
@@ -173,7 +173,7 @@ const backward = () => {
                   style={{ minWidth: '150px', zIndex: 1, marginRight: '-5px' }}
                   onMouseLeave={() => setShowUserMenu(false)}
                 >
-                  <a className="dropdown-item" href={`${sessionStorage.getItem('userType')}/profile-view`}
+                  <a className="dropdown-item" href={`/${sessionStorage.getItem('userType')}/profile-view`}
                   >Profile</a>
                   <div className="dropdown-divider"></div>
                 <button 

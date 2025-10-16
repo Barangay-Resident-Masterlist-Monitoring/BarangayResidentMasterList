@@ -4,6 +4,7 @@
   padding: 2rem;
   background-color: #ffffff;
   transition: transform 0.3s, box-shadow 0.3s;
+  z-index: -1;
 }
 
 /* .profileCard:hover {
