@@ -4,7 +4,7 @@ import { FaUser, FaLock } from 'react-icons/fa';
 import loginCSS from '../css/login.module.css';
 import useSweetAlert from '../hooks/useSweetAlert';
 
-const Login = ({ currentUserType }) => {
+const login = ({ currentUserType }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -113,4 +113,4 @@ const Login = ({ currentUserType }) => {
   );
 };
 
-export default Login;
+export default login;
