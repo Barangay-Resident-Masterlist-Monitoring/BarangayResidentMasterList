@@ -21,8 +21,13 @@ const MainContent = () => {
   return (
     <main
       style={{
-      paddingLeft: sidebarToggled === 'true' ? '5.5rem' : '16.5rem',
-      transition: 'padding-left 0.1s',
+        paddingLeft: 
+          sidebarToggled 
+          === 'true' ? '3.9rem' 
+          : 
+          '16.5rem' && 'position: fixed; justify-content:center',
+        
+       transition: 'padding-left 0.1s',
     }}>
       <Outlet />
     </main>

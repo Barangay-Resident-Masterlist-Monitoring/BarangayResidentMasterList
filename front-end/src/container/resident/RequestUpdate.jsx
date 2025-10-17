@@ -143,15 +143,13 @@ const RequestUpdate = ({ viewOnly = false }) => {
   return (
     <div style={{ minHeight: '100vh', margin: '0 50px 50px 50px' }}>
       <div className={`${background['bg-1']} d-flex justify-content-center`}>
-        <div className="card shadow-lg"
+       <div className="card shadow-lg p-3"
           style={{ borderRadius: '15px', backgroundColor: '#ffffff', width: '100%' }}>
           <h3 className={`${color['forest-green']} mb-3 text-center rounded-top p-3`}>
             Update Request Form
           </h3>
 
           <div className="p-3">
-
-  
             <div className="mb-3">
               <label className="form-label fw-bold">Select Resident</label>
               <Multiselect

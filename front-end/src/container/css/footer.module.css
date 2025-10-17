@@ -6,7 +6,7 @@
   background-color: #228B22;
   color: #fff;
   width: 100%;
-  z-index: 1;
+  z-index: 0;
 }
 
 .logoContainer {
@@ -29,7 +29,7 @@
     left: 0;
     padding: 0.75rem 1.5rem;
     font-size: 0.85rem;
-    z-index: 1;
+    z-index: 0;
   }
 
   .logoContainer {

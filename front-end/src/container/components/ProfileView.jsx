@@ -34,26 +34,26 @@ const ProfileView = () => {
         <h2 className={`text-center ${styles.profileName} mb-1`}>
           {user.firstName} {user.middleName} {user.lastName}
         </h2>
-        <p className={`text-center ${styles.profileRole} mb-4`}>{user.role}</p>
+        <p className={`text-center ${styles.profileRole} mb-4`}>{user.role ?? "--"}</p>
 
         <ul className="list-group list-group-flush">
           <li className="list-group-item d-flex justify-content-between flex-wrap">
-            <span>Age</span> <span className={styles.profileInfo}>{user.age}</span>
+            <span>Age</span> <span className={styles.profileInfo}>{user.age ?? "--"}</span>
           </li>
           <li className="list-group-item d-flex justify-content-between flex-wrap">
-            <span>Sex</span> <span className={styles.profileInfo}>{user.sex}</span>
+            <span>Sex</span> <span className={styles.profileInfo}>{user.sex ?? "--"}</span>
           </li>
           <li className="list-group-item d-flex justify-content-between flex-wrap">
-            <span>Birthdate</span> <span className={styles.profileInfo}>{user.birthdate}</span>
+            <span>Birthdate</span> <span className={styles.profileInfo}>{user.birthdate ?? "--"}</span>
           </li>
           <li className="list-group-item d-flex justify-content-between flex-wrap">
-            <span>Civil Status</span> <span className={styles.profileInfo}>{user.civilStatus}</span>
+            <span>Civil Status</span> <span className={styles.profileInfo}>{user.civilStatus ?? "--"}</span>
           </li>
           <li className="list-group-item d-flex justify-content-between flex-wrap">
-            <span>Occupation</span> <span className={styles.profileInfo}>{user.occupation}</span>
+            <span>Occupation</span> <span className={styles.profileInfo}>{user.occupation ?? "--"}</span>
           </li>
           <li className="list-group-item d-flex justify-content-between flex-wrap">
-            <span>Contact</span> <span className={styles.profileInfo}>{user.contactNumber}</span>
+            <span>Contact</span> <span className={styles.profileInfo}>{user.contactNumber ?? "--"}</span>
           </li>
         </ul>
       </div>

@@ -103,7 +103,7 @@ const Header = ({ userType }) => {
               className="fst-italic text-capitalize"
               style={{ fontSize: '12px' }}
             >
-              Admin No: {localStorage.getItem('CurrentUserId') ?? '--'}
+              {userType === 'Secretary'? "Admin": "Resident"} No: {localStorage.getItem('CurrentUserId') ?? '--'}
             </span>
           </div>
 
