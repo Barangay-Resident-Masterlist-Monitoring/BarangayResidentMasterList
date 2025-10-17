@@ -88,7 +88,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
     setFields(prev => ({ ...prev, [key]: value }));
   };
 
-  // === FIXED IMAGE UPLOAD ===
+
   const handleImageUpload = e => {
     if (viewOnly || hasPendingRequest) return;
     const file = e.target.files[0];
@@ -151,7 +151,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
 
           <div className="p-3">
 
-            {/* RESIDENT SELECTION */}
+  
             <div className="mb-3">
               <label className="form-label fw-bold">Select Resident</label>
               <Multiselect
@@ -183,7 +183,7 @@ const RequestUpdate = ({ viewOnly = false }) => {
               />
             </div>
 
-            {/* input fields */}
+
             <div className="row g-2">
               <div className="col-md-6 mb-3">
                 <label className="form-label fw-bold">First Name</label>

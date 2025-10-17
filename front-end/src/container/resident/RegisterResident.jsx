@@ -10,7 +10,7 @@ const RegisterResident = () => {
     return stored ? JSON.parse(stored) : [];
   });
 
-  const lastUserId = localStorage.getItem('CurrentUserId'); 
+  const lastUserId = localStorage.getItem('CurrentUserId');
 
   const [showModal, setShowModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -26,8 +26,8 @@ const RegisterResident = () => {
     otherOccupation: '',
     contactNumber: '',
     role: 'Resident',
-    photo: null,    
-    photoURL: ''    
+    photo: null,
+    photoURL: ''
   });
 
   useEffect(() => {
@@ -88,19 +88,6 @@ const RegisterResident = () => {
     return today.toISOString().split('T')[0];
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const photoURL = URL.createObjectURL(file);
-
-      setFormData((prevData) => ({
-        ...prevData,
-        photo: file,
-        photoURL
-      }));
-    }
-  };
-
   const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -108,6 +95,23 @@ const RegisterResident = () => {
       reader.onerror = error => reject(error);
       reader.readAsDataURL(file);
     });
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      getBase64(file)
+        .then((base64) => {
+          setFormData((prevData) => ({
+            ...prevData,
+            photo: file,
+            photoURL: base64
+          }));
+        })
+        .catch(() => {
+          fireError('Photo Error', 'Failed to process the photo.');
+        });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -150,7 +154,6 @@ const RegisterResident = () => {
     }
 
     const newId = residents.length > 0 ? Math.max(...residents.map(r => r.id)) + 1 : 1;
-
     const occupationToSave = occupation === 'Others' ? otherOccupation.trim() : occupation;
 
     let base64PhotoURL = photoURL;
@@ -163,7 +166,6 @@ const RegisterResident = () => {
       }
     }
 
-    // Create new resident object
     const newResident = {
       id: newId,
       birthdate,
@@ -174,15 +176,13 @@ const RegisterResident = () => {
       otherOccupation: occupation === 'Others' ? otherOccupation.trim() : '',
       contactNumber,
       role: 'Resident',
-      photoURL: base64PhotoURL,
-      // You may want to add firstName/lastName if needed here
+      photoURL: base64PhotoURL
     };
 
-    // Save to residents list and localStorage
     const updatedResidents = [...residents, newResident];
     setResidents(updatedResidents);
     localStorage.setItem('users', JSON.stringify(updatedResidents));
-    localStorage.setItem('CurrentUserId', String(newId)); // Save new user ID
+    localStorage.setItem('CurrentUserId', String(newId));
 
     fireSuccess('Registered!', 'Your account has been registered successfully.');
 

@@ -36,19 +36,20 @@ const Register = () => {
 
   const handleImageChange = (e) => {
     const { name, files } = e.target;
-    if (name === 'photo') {
-      const file = files[0];
-      if (file) {
-        if (formData.photoURL) {
-          URL.revokeObjectURL(formData.photoURL);
-        }
-        const photoURL = URL.createObjectURL(file);
+    const file = files[0];
+
+    if (name === 'photo' && file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
         setFormData((prev) => ({
           ...prev,
-          photo: file,
-          photoURL: photoURL,
+          photo: reader.result,      
+          photoURL: reader.result    
         }));
-      }
+      };
+
+      reader.readAsDataURL(file);
     }
   };
 
