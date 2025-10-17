@@ -6,7 +6,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaUserPlus,
-  FaWpforms 
+  FaWpforms
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import mabalanoyLogo from '../images/mabalanoy.png';
@@ -50,12 +50,13 @@ const Sidebar = () => {
 
   return (
     <div
-      className="overflow-auto text-white d-flex flex-column position-fixed top-0 bottom-0 start-0 h-100 shadow-lg"
+      className={`overflow-auto text-white d-flex flex-column position-fixed top-0 bottom-0 start-0 h-100 shadow-lg`}
       style={{
         width: collapsed ? '70px' : '240px',
         transition: 'width 0.3s',
         backgroundColor: '#228B22',
         zIndex: 1,
+        boxSizing: 'border-box',  
       }}
     >
       <button
@@ -70,7 +71,7 @@ const Sidebar = () => {
         <img
           src={mabalanoyLogo}
           alt="Barangay Logo"
-          className={`img-fluid rounded-circle ${collapsed ? 'w-25' : 'w-50'} transition-all`}
+          className={`img-fluid rounded-circle transition-all ${collapsed ? 'w-25' : 'w-50'}`}
           style={{ objectFit: 'cover' }}
         />
         {!collapsed && <span className="mt-2 fw-bold fs-5 text-center">Barangay Monitoring System</span>}

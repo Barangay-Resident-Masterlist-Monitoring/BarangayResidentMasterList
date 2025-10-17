@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import loginCSS from '../css/login.module.css';
 import useSweetAlert from '../hooks/useSweetAlert';
@@ -14,9 +14,17 @@ const Register = () => {
     password: '',
     confirmPassword: '',
     role: '',
-    photo: null,       // Store the file object
-    photoURL: null,    // Store the photo URL for preview
+    photo: null,
+    photoURL: null,
   });
+
+  useEffect(() => {
+    return () => {
+      if (formData.photoURL) {
+        URL.revokeObjectURL(formData.photoURL);
+      }
+    };
+  }, [formData.photoURL]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,11 +39,14 @@ const Register = () => {
     if (name === 'photo') {
       const file = files[0];
       if (file) {
+        if (formData.photoURL) {
+          URL.revokeObjectURL(formData.photoURL);
+        }
         const photoURL = URL.createObjectURL(file);
         setFormData((prev) => ({
           ...prev,
-          photo: file,      // Store the actual file object
-          photoURL: photoURL, // Store the URL for preview
+          photo: file,
+          photoURL: photoURL,
         }));
       }
     }
@@ -168,7 +179,6 @@ const Register = () => {
               </select>
             </div>
 
-            {/* Image Upload Section */}
             <div className="col-12">
               <label htmlFor="photo" className="form-label">Profile Picture</label>
               <input

@@ -88,12 +88,16 @@ const RequestUpdate = ({ viewOnly = false }) => {
     setFields(prev => ({ ...prev, [key]: value }));
   };
 
+  // === FIXED IMAGE UPLOAD ===
   const handleImageUpload = e => {
     if (viewOnly || hasPendingRequest) return;
     const file = e.target.files[0];
     if (!file) return;
+
     const reader = new FileReader();
-    reader.onloadend = () => setImageData(reader.result);
+    reader.onload = () => {
+      setImageData(reader.result);
+    };
     reader.readAsDataURL(file);
   };
 

@@ -1,18 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-// import { useNavigate } from 'react-router-dom';
 import useSweetAlert from '../hooks/useSweetAlert';
 import styles from '../css/login.module.css';
 
 const RegisterResident = () => {
   const { fireSuccess, fireError } = useSweetAlert();
-  // const navigate = useNavigate();
 
   const [residents, setResidents] = useState(() => {
     const stored = localStorage.getItem('users');
     return stored ? JSON.parse(stored) : [];
   });
 
-  const [lastUserId] = useState(localStorage.getItem('CurrentUserId') || null);
+  const lastUserId = localStorage.getItem('CurrentUserId'); 
+
   const [showModal, setShowModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedResident, setSelectedResident] = useState(null);
@@ -27,8 +26,8 @@ const RegisterResident = () => {
     otherOccupation: '',
     contactNumber: '',
     role: 'Resident',
-    photo: null,
-    photoURL: ''
+    photo: null,    
+    photoURL: ''    
   });
 
   useEffect(() => {
@@ -38,23 +37,29 @@ const RegisterResident = () => {
     hasLoaded.current = false;
   }, [residents]);
 
+  const isUserRegistered = lastUserId && residents.some(r => r.id === Number(lastUserId));
+
   const openModal = (resident = null) => {
-    if (resident) {
-      setFormData({ ...resident, otherOccupation: '' });
-    } else {
-      setFormData({
-        birthdate: '',
-        age: '',
-        sex: '',
-        civilStatus: '',
-        occupation: '',
-        otherOccupation: '',
-        contactNumber: '',
-        role: 'Resident',
-        photo: null,
-        photoURL: ''
-      });
+    if (isUserRegistered) {
+      fireError(
+        'Registration Not Allowed',
+        'You have already registered your account. Please update your information instead.'
+      );
+      return;
     }
+
+    setFormData({
+      birthdate: '',
+      age: '',
+      sex: '',
+      civilStatus: '',
+      occupation: '',
+      otherOccupation: '',
+      contactNumber: '',
+      role: 'Resident',
+      photo: null,
+      photoURL: ''
+    });
     setShowModal(true);
   };
 
@@ -86,20 +91,33 @@ const RegisterResident = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prevData) => ({
-          ...prevData,
-          photo: file,
-          photoURL: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
+      const photoURL = URL.createObjectURL(file);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        photo: file,
+        photoURL
+      }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isUserRegistered) {
+      fireError('Already Registered', 'You cannot register more than once.');
+      setShowModal(false);
+      return;
+    }
 
     const {
       birthdate,
@@ -109,60 +127,64 @@ const RegisterResident = () => {
       occupation,
       otherOccupation,
       contactNumber,
+      photo,
       photoURL
     } = formData;
 
     if (
       !birthdate ||
       !age ||
-      Number(age) < 18 ||
+      Number(age) < 1 ||
       !sex ||
       !civilStatus ||
       !(occupation && (occupation !== 'Others' || (occupation === 'Others' && otherOccupation && otherOccupation.trim() !== ''))) ||
       !contactNumber ||
       !photoURL
     ) {
-      if (Number(age) < 18) {
-        fireError('Invalid Age', 'You must be at least 18 years old to register.');
+      if (Number(age) < 1) {
+        fireError('Invalid Age', 'You must be at least 1 years old to register.');
       } else {
         fireError('Missing Data', 'Please fill all fields.');
       }
       return;
     }
 
+    const newId = residents.length > 0 ? Math.max(...residents.map(r => r.id)) + 1 : 1;
+
     const occupationToSave = occupation === 'Others' ? otherOccupation.trim() : occupation;
 
-    if (!lastUserId) {
-      fireError('Not Found', 'No resident to update.');
-      return;
-    }
-
-    const updatedResidents = residents.map((resident) => {
-      if (resident.id === Number(lastUserId)) {
-        return {
-          ...resident,
-          birthdate,
-          age,
-          sex,
-          civilStatus,
-          occupation: occupationToSave,
-          otherOccupation: occupation === 'Others' ? otherOccupation.trim() : resident.otherOccupation,
-          contactNumber,
-          photoURL
-        };
+    let base64PhotoURL = photoURL;
+    if (photo && !photoURL.startsWith('data:')) {
+      try {
+        base64PhotoURL = await getBase64(photo);
+      } catch (error) {
+        fireError('Photo Error', 'Failed to process the photo.');
+        return;
       }
-      return resident;
-    });
-
-    const updatedResident = updatedResidents.find((resident) => resident.id === Number(lastUserId));
-
-    if (updatedResident) {
-      setResidents(updatedResidents);
-      localStorage.setItem('users', JSON.stringify(updatedResidents));
-      fireSuccess('Updated!', 'Resident information updated successfully.');
-    } else {
-      fireError('Not Found', 'Resident not found in local storage.');
     }
+
+    // Create new resident object
+    const newResident = {
+      id: newId,
+      birthdate,
+      age,
+      sex,
+      civilStatus,
+      occupation: occupationToSave,
+      otherOccupation: occupation === 'Others' ? otherOccupation.trim() : '',
+      contactNumber,
+      role: 'Resident',
+      photoURL: base64PhotoURL,
+      // You may want to add firstName/lastName if needed here
+    };
+
+    // Save to residents list and localStorage
+    const updatedResidents = [...residents, newResident];
+    setResidents(updatedResidents);
+    localStorage.setItem('users', JSON.stringify(updatedResidents));
+    localStorage.setItem('CurrentUserId', String(newId)); // Save new user ID
+
+    fireSuccess('Registered!', 'Your account has been registered successfully.');
 
     setShowModal(false);
   };
@@ -222,9 +244,15 @@ const RegisterResident = () => {
 
   return (
     <div className={`container h-100 my-5 ${styles.bg}`}>
-      <div className={`d-flex justify-content-between align-items-center mb-4`}>
+      <div className={`d-flex justify-content-between align-items-center mb-4 flex-column flex-md-row`}>
         <h2 className={`text-center ${styles['forest-green-text']}`}>Resident Registration</h2>
-        <button className={`btn mb-3 ${styles['forest-green']}`} onClick={() => openModal()}>
+
+        <button
+          className={`btn mb-3 ${styles['forest-green']}`}
+          onClick={() => openModal()}
+          disabled={isUserRegistered}
+          title={isUserRegistered ? "You have already registered" : "Register Your Account"}
+        >
           Register Your Account
         </button>
       </div>
@@ -329,7 +357,7 @@ const RegisterResident = () => {
                   <div className="mb-3">
                     <label className="form-label">Contact Number</label>
                     <input
-                      type="text"
+                      type="tel"
                       className="form-control"
                       name="contactNumber"
                       value={formData.contactNumber}
@@ -339,31 +367,39 @@ const RegisterResident = () => {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label">Upload Photo</label>
+                    <label className="form-label">Photo Upload</label>
                     <input
                       type="file"
+                      accept="image/*"
                       className="form-control"
                       onChange={handlePhotoChange}
-                      accept="image/*"
+                      required={!formData.photoURL}
                     />
+                    {formData.photoURL && (
+                      <img
+                        src={formData.photoURL}
+                        alt="Preview"
+                        style={{ marginTop: '15px', maxWidth: '200px', maxHeight: '200px' }}
+                      />
+                    )}
                   </div>
                 </div>
 
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={closeModal}>
-                    Close
-                  </button>
                   <button type="submit" className={`btn ${styles['forest-green']}`}>
                     Submit
+                  </button>
+                  <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                    Close
                   </button>
                 </div>
               </form>
             </div>
           </div>
         </div>
-      ) : (
-        <ProfileViewer />
-      )}
+      ) : null}
+
+      <ProfileViewer />
 
       {showProfileModal && selectedResident && (
         <div
@@ -373,25 +409,23 @@ const RegisterResident = () => {
           onClick={() => setShowProfileModal(false)}
           style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
         >
-          <div className="modal-dialog modal-lg" role="document" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-dialog" role="document" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">{selectedResident.firstName} {selectedResident.lastName} - Profile</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowProfileModal(false)}
-                ></button>
+                <h5 className="modal-title">{selectedResident.firstName} {selectedResident.lastName} Photo</h5>
+                <button type="button" className="btn-close" onClick={() => setShowProfileModal(false)}></button>
               </div>
-              <div className="modal-body">
-                {selectedResident.photoURL && (
-                  <img
-                    src={selectedResident.photoURL}
-                    alt="Resident Photo"
-                    className="img-fluid mx-auto d-block"
-                    style={{ maxWidth: '300px' }}
-                  />
-                )}
+              <div className="modal-body d-flex justify-content-center">
+                <img
+                  src={selectedResident.photoURL}
+                  alt={`${selectedResident.firstName} ${selectedResident.lastName}`}
+                  style={{ maxWidth: '100%', maxHeight: '400px' }}
+                />
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setShowProfileModal(false)}>
+                  Close
+                </button>
               </div>
             </div>
           </div>
