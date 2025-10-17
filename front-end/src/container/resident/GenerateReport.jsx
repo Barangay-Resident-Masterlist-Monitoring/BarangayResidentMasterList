@@ -47,9 +47,7 @@ const GenerateReport = () => {
                     <th>Age</th>
                     <th>Sex</th>
                     <th>Birthdate</th>
-                    {/* <th>Civil Status</th> */}
-                    {/* <th>Occupation</th> */}
-                    {/* <th>Contact Number</th> */}
+
                   </tr>
                 </thead>
                 <tbody>
@@ -57,15 +55,13 @@ const GenerateReport = () => {
                     residents.map((r, index) => (
                       <tr key={r.id}>
                         <td>{index + 1}</td>
-                        <td>{r.firstName}</td>
-                        <td>{r.middleName}</td>
-                        <td>{r.lastName}</td>
-                        <td>{r.age}</td>
-                        <td>{r.sex}</td>
-                        <td>{r.birthdate}</td>
-                        {/* <td>{r.civilStatus}</td> */}
-                        {/* <td>{r.occupation}</td>
-                        <td>{r.contactNumber}</td> */}
+                        <td>{r.firstName ?? '--'}</td>
+                        <td>{r.middleName ?? '--'}</td>
+                        <td>{r.lastName ?? '--'}</td>
+                        <td>{r.age ?? '--'}</td>
+                        <td>{r.sex ?? '--'}</td>
+                        <td>{r.birthdate ?? '--'}</td>
+
                       </tr>
                     ))
                   ) : (

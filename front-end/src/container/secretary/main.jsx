@@ -7,7 +7,7 @@ const main = () => {
 
   return (
     <div>
-      <Header />
+      <Header userType='secretary'/>
       <SideBar />
       <MainContent />
       <Footer style={{position: 'relative', bottom: '0', }} />

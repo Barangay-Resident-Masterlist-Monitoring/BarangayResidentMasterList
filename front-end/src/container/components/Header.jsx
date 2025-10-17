@@ -1,24 +1,32 @@
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import headerCSS from '../css/header.module.css';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
 
-const Header = () => {
-  const [currentEmail] = useState(sessionStorage.getItem('email') || '');
+const Header = ({ userType }) => {
+  const [username, setUsername] = useState('');
+  const [users] = useState(JSON.parse(localStorage.getItem('users'))[0]);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [sidebarToggled, setSidebarToggled] = useState(sessionStorage.getItem('onToggleSidebar') || 'false');
+  const [sidebarToggled, setSidebarToggled] = useState(
+    sessionStorage.getItem('onToggleSidebar') || 'false'
+  );
   const navigate = useNavigate();
 
   const userMenuRef = useRef(null);
   const notifRef = useRef(null);
 
-const backward = () => {
-  navigate(`/${sessionStorage.getItem('userType')}/login`);
-  localStorage.removeItem('lastUserId');
-  sessionStorage.clear();
-};
+  const backward = () => {
+    navigate(`/${userType}/login`);
+    localStorage.removeItem('lastUserId');
+    sessionStorage.clear();
+  };
 
+  useEffect(() => {
+    if (users.id === Number(localStorage.getItem('CurrentUserId'))) {
+      setUsername(`${users.firstName}, ${users.lastName}`);
+    }
+  }, [sessionStorage.getItem('CurrentUserId')]);
 
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'You have a new message' },
@@ -33,7 +41,7 @@ const backward = () => {
 
   const toggleNotifications = () => {
     setShowNotifications((prev) => !prev);
-    setShowUserMenu(false); 
+    setShowUserMenu(false);
   };
 
   const handleNotificationClick = (id) => {
@@ -50,47 +58,59 @@ const backward = () => {
         return prev;
       });
     }, 200);
-
     return () => clearInterval(interval);
   }, []);
 
   return (
     <nav
-      className={`navbar navbar-expand-lg bg- ${headerCSS.navbar} mb-4`}
+      className={`navbar navbar-expand-lg ${headerCSS.navbar} mb-4`}
       style={
         sidebarToggled === 'true'
           ? { paddingLeft: '4rem', transition: 'padding-left 0.1s' }
-          : { paddingLeft: '15rem', transition: 'padding-left 0.1s'}
+          : { paddingLeft: '15rem', transition: 'padding-left 0.1s' }
       }
     >
-      <div className="container-fluid px-4">
-        <a className={`navbar-brand ${headerCSS.brandText} text-white d-flex align-items-center`} href="#">
-         <span
-            className="badge text-dark bg-white px-3 py-2 rounded-pill"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 600,
-              fontSize: '1rem',
-              letterSpacing: '0.05em',
-              textShadow: '0 1px 1px rgba(0,0,0,0.1)',
-            }}
-          >
-          {currentEmail 
-        ? currentEmail.split('@')[0].trim().replace(/^./, match => match.toUpperCase()) 
-        : 'Dashboard'}
-
-          </span>
-
-        </a>
-
+    <div className="container-fluid d-flex justify-content-end px-3 px-md-4">
         <button
           className={`navbar-toggler ${headerCSS.customToggler} bg-white text-white`}
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarGlass"
         >
-          <span className={`navbar-toggler-icon ${headerCSS.customTogglerIcon}`}></span>
+          <span
+            className={`navbar-toggler-icon ${headerCSS.customTogglerIcon}`}
+          ></span>
         </button>
+
+        <div className="d-flex flex-wrap align-items-center justify-content-end justify-content-lg-start w-100 mb-3 mb-lg-0">
+          <span
+            className="text-white px-3 py-2 rounded-pill text-capitalize fw-bold me-2 mb-2"
+            style={{
+              fontWeight: 'bolder',
+              fontSize: '1rem',
+              letterSpacing: '0.05em',
+              textShadow: '0 1px 1px rgba(0,0,0,0.1)'
+            }}
+          >
+            {username ? username : 'Dashboard'}
+          </span>
+
+          <div
+            className="user-banner text-white py-2 px-3 rounded me-2 mb-2"
+            style={{ backgroundColor: 'forestgreen' }}
+          >
+            <span
+              className="fst-italic text-capitalize"
+              style={{ fontSize: '12px' }}
+            >
+              Admin No: {localStorage.getItem('CurrentUserId') ?? '--'}
+            </span>
+          </div>
+
+          <div className="badge bg-white text-black px-3 py-1 rounded mb-2">
+            <span className="text-capitalize">{userType}</span>
+          </div>
+        </div>
 
         <div className="collapse navbar-collapse justify-content-end" id="navbarGlass">
           <ul className="navbar-nav align-items-end mb-2 mb-lg-0">
@@ -113,7 +133,7 @@ const backward = () => {
                       padding: '0 6px',
                       fontSize: '10px',
                       fontWeight: 'bold',
-                      boxShadow: '0 0 2px rgba(0,0,0,0.2)',
+                      boxShadow: '0 0 2px rgba(0,0,0,0.2)'
                     }}
                   >
                     {notifications.length}
@@ -127,9 +147,10 @@ const backward = () => {
                   style={{ minWidth: '200px', zIndex: 1, marginRight: '-8px' }}
                   onMouseLeave={() => setShowNotifications(false)}
                 >
-                  <div className="dropdown-item-text text-muted small mb-2">Notifications</div>
+                  <div className="dropdown-item-text text-muted small mb-2">
+                    Notifications
+                  </div>
                   <div className="dropdown-divider"></div>
-
                   {notifications.length > 0 ? (
                     notifications.map((note) => (
                       <button
@@ -142,18 +163,21 @@ const backward = () => {
                           width: '100%',
                           padding: '0.25rem 1rem',
                           textAlign: 'left',
-                          cursor: 'pointer',
+                          cursor: 'pointer'
                         }}
                       >
                         {note.message}
                       </button>
                     ))
                   ) : (
-                    <div className="dropdown-item text-muted small">No new notifications</div>
+                    <div className="dropdown-item text-muted small">
+                      No new notifications
+                    </div>
                   )}
-
                   <div className="dropdown-divider"></div>
-                  <a className="dropdown-item text-primary" href="#">View all</a>
+                  <a className="dropdown-item text-primary" href="#">
+                    View all
+                  </a>
                 </div>
               )}
             </li>
@@ -173,13 +197,14 @@ const backward = () => {
                   style={{ minWidth: '150px', zIndex: 1, marginRight: '-5px' }}
                   onMouseLeave={() => setShowUserMenu(false)}
                 >
-                  <a className="dropdown-item" href={`/${sessionStorage.getItem('userType')}/profile-view`}
-                  >Profile</a>
-                  <div className="dropdown-divider"></div>
-                <button 
-                    className="dropdown-item text-danger" 
-                    onClick={backward}
+                  <a
+                    className="dropdown-item"
+                    href={`/${sessionStorage.getItem('userType')}/profile-view`}
                   >
+                    Profile
+                  </a>
+                  <div className="dropdown-divider"></div>
+                  <button className="dropdown-item text-danger" onClick={backward}>
                     Logout
                   </button>
                 </div>

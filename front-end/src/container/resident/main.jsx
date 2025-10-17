@@ -8,7 +8,7 @@ const main = () => {
  
   return (
     <div>
-      <Header />
+      <Header userType='resident'/>
       <SideBar />
       <MainContent />
       <Footer/>

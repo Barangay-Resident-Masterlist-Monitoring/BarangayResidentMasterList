@@ -41,7 +41,6 @@ const GenerateReport = () => {
                 <thead className="table-light">
                   <tr>
                     <th>#</th>
-                    <th>ID</th>
                     <th>First Name</th>
                     <th>Middle Name</th>
                     <th>Last Name</th>
@@ -56,20 +55,19 @@ const GenerateReport = () => {
                 </thead>
                 <tbody>
                   {secretaries.length > 0 ? (
-                    secretaries.map((s, index) => (
+                    secretaries.map((s) => (
                       <tr key={s.id}>
-                        <td>{index + 1}</td>
-                        <td>{s.id}</td>
-                        <td>{s.firstName}</td>
-                        <td>{s.middleName}</td>
-                        <td>{s.lastName}</td>
-                        <td>{s.age}</td>
-                        <td>{s.sex}</td>
-                        <td>{s.birthdate}</td>
-                        <td>{s.civilStatus}</td>
-                        <td>{s.occupation}</td>
-                        <td>{s.contactNumber}</td>
-                        <td>{s.role}</td>
+                        <td>{s.id ?? '--'}</td>
+                        <td>{s.firstName ?? '--'}</td>
+                        <td>{s.middleName ?? '--'}</td>
+                        <td>{s.lastName ?? '--'}</td>
+                        <td>{s.age ?? '--'}</td>
+                        <td>{s.sex ?? '--'}</td>
+                        <td>{s.birthdate ?? '--'}</td>
+                        <td>{s.civilStatus ?? '--'}</td>
+                        <td>{s.occupation ?? '--'}</td>
+                        <td>{s.contactNumber ?? '--'}</td>
+                        <td>{s.role ?? '--'}</td>
                       </tr>
                     ))
                   ) : (
