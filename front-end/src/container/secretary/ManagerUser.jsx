@@ -6,7 +6,7 @@ const ManageUser = () => {
   const { fireSuccess, fireError, fireConfirm } = useSweetAlert();
 
   const [users, setUsers] = useState(() => {
-    const stored = localStorage.getItem('users') || localStorage.getItem('resident');
+    const stored = localStorage.getItem('users');
     return stored ? JSON.parse(stored) : [];
   });
 

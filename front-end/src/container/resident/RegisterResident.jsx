@@ -12,9 +12,13 @@ const RegisterResident = () => {
 
   const lastUserId = localStorage.getItem('CurrentUserId');
 
+  const [isUserRegistered, setIsUserRegistered] = useState(false);
+
   const [showModal, setShowModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedResident, setSelectedResident] = useState(null);
+  const [users] = useState(JSON.parse(localStorage.getItem('users'))?.[0] || {});
+  const [isEmpty, setisEmpty] = useState(false);
   const hasLoaded = useRef(true);
 
   const [formData, setFormData] = useState({
@@ -37,7 +41,36 @@ const RegisterResident = () => {
     hasLoaded.current = false;
   }, [residents]);
 
-  const isUserRegistered = lastUserId && residents.some(r => r.id === Number(lastUserId));
+  useEffect(() => {
+    if (!lastUserId || residents.length === 0) {
+      setIsUserRegistered(false);
+      return;
+    }
+
+    const user = residents.find(r => r.id === Number(lastUserId));
+
+    if (!user) {
+      setIsUserRegistered(false);
+      return;
+    }
+
+    const registered =
+      user.birthdate &&
+      user.age &&
+      Number(user.age) >= 1 &&
+      user.sex &&
+      user.civilStatus &&
+      user.occupation &&
+      user.contactNumber;
+
+    setIsUserRegistered(Boolean(registered));
+
+    if (users.photoURL === null) {
+      setisEmpty(true);
+    } else {
+      setisEmpty(false);
+    }
+  }, [lastUserId, residents, users]);
 
   const openModal = (resident = null) => {
     if (isUserRegistered) {
@@ -117,12 +150,6 @@ const RegisterResident = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isUserRegistered) {
-      fireError('Already Registered', 'You cannot register more than once.');
-      setShowModal(false);
-      return;
-    }
-
     const {
       birthdate,
       age,
@@ -143,7 +170,7 @@ const RegisterResident = () => {
       !civilStatus ||
       !(occupation && (occupation !== 'Others' || (occupation === 'Others' && otherOccupation && otherOccupation.trim() !== ''))) ||
       !contactNumber ||
-      !photoURL
+      (isEmpty && !photoURL)
     ) {
       if (Number(age) < 1) {
         fireError('Invalid Age', 'You must be at least 1 years old to register.');
@@ -153,7 +180,6 @@ const RegisterResident = () => {
       return;
     }
 
-    const newId = residents.length > 0 ? Math.max(...residents.map(r => r.id)) + 1 : 1;
     const occupationToSave = occupation === 'Others' ? otherOccupation.trim() : occupation;
 
     let base64PhotoURL = photoURL;
@@ -166,25 +192,54 @@ const RegisterResident = () => {
       }
     }
 
-    const newResident = {
-      id: newId,
-      birthdate,
-      age,
-      sex,
-      civilStatus,
-      occupation: occupationToSave,
-      otherOccupation: occupation === 'Others' ? otherOccupation.trim() : '',
-      contactNumber,
-      role: 'Resident',
-      photoURL: base64PhotoURL
-    };
+    if (lastUserId) {
+      // UPDATE existing resident
+      const idToUpdate = Number(lastUserId);
+      const updatedResidents = residents.map((resident) => {
+        if (resident.id === idToUpdate) {
+          return {
+            ...resident,
+            birthdate,
+            age,
+            sex,
+            civilStatus,
+            occupation: occupationToSave,
+            otherOccupation: occupation === 'Others' ? otherOccupation.trim() : '',
+            contactNumber,
+            photoURL: base64PhotoURL
+          };
+        }
+        return resident;
+      });
 
-    const updatedResidents = [...residents, newResident];
-    setResidents(updatedResidents);
-    localStorage.setItem('users', JSON.stringify(updatedResidents));
-    localStorage.setItem('CurrentUserId', String(newId));
+      setResidents(updatedResidents);
+      localStorage.setItem('users', JSON.stringify(updatedResidents));
 
-    fireSuccess('Registered!', 'Your account has been registered successfully.');
+      fireSuccess('Updated!', 'Your account has been updated successfully.');
+    } else {
+      // CREATE new resident
+      const newId = residents.length > 0 ? Math.max(...residents.map(r => r.id)) + 1 : 1;
+
+      const newResident = {
+        id: newId,
+        birthdate,
+        age,
+        sex,
+        civilStatus,
+        occupation: occupationToSave,
+        otherOccupation: occupation === 'Others' ? otherOccupation.trim() : '',
+        contactNumber,
+        role: 'Resident',
+        photoURL: base64PhotoURL
+      };
+
+      const updatedResidents = [...residents, newResident];
+      setResidents(updatedResidents);
+      localStorage.setItem('users', JSON.stringify(updatedResidents));
+      localStorage.setItem('CurrentUserId', String(newId));
+
+      fireSuccess('Registered!', 'Your account has been registered successfully.');
+    }
 
     setShowModal(false);
   };
@@ -336,6 +391,7 @@ const RegisterResident = () => {
                       <option value="">Select Occupation</option>
                       <option value="Employee">Employee</option>
                       <option value="Self-Employed">Self-Employed</option>
+                      <option value="Unemployed">Unemployed</option>
                       <option value="Student">Student</option>
                       <option value="Others">Others</option>
                     </select>
@@ -373,7 +429,7 @@ const RegisterResident = () => {
                       accept="image/*"
                       className="form-control"
                       onChange={handlePhotoChange}
-                      required={!formData.photoURL}
+                      required={isEmpty}
                     />
                     {formData.photoURL && (
                       <img

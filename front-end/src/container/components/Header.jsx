@@ -5,7 +5,7 @@ import { FaBell, FaUserCircle } from 'react-icons/fa';
 
 const Header = ({ userType }) => {
   const [username, setUsername] = useState('');
-  const [users] = useState(JSON.parse(localStorage.getItem('users'))[0]);
+  const [users] = useState(JSON.parse(localStorage.getItem('users'))[0] ?? 0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarToggled, setSidebarToggled] = useState(
