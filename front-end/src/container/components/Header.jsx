@@ -84,7 +84,7 @@ const Header = ({ userType }) => {
 
         <div className="d-flex flex-wrap align-items-center justify-content-end justify-content-lg-start w-100 mb-3 mb-lg-0">
           <span
-            className="text-white px-3 py-2 rounded-pill text-capitalize fw-bold me-2 mb-2"
+            className="text-white px-3 py-2 rounded-pill text-capitalize fw-bold me-2"
             style={{
               fontWeight: 'bolder',
               fontSize: '1rem',
@@ -96,7 +96,7 @@ const Header = ({ userType }) => {
           </span>
 
           <div
-            className="user-banner text-white py-2 px-3 rounded me-2 mb-2"
+            className="user-banner text-white py-2 px-3 rounded me-2"
             style={{ backgroundColor: 'forestgreen' }}
           >
             <span
@@ -107,7 +107,7 @@ const Header = ({ userType }) => {
             </span>
           </div>
 
-          <div className="badge bg-white text-black px-3 py-1 rounded mb-2">
+          <div className="badge bg-white text-black px-3 py-1 rounded">
             <span className="text-capitalize">{userType}</span>
           </div>
         </div>
@@ -211,7 +211,7 @@ const Header = ({ userType }) => {
               )}
             </li>
           </ul>
-        </div>
+        </div> 
       </div>
     </nav>
   );
