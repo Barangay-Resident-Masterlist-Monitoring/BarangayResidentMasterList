@@ -15,7 +15,7 @@ import { FaChartPie, FaEye, FaListAlt, FaCompass, FaLock, FaInfoCircle } from 'r
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, BarElement, Tooltip, Legend, Title);
 
-const dashboard = () => {
+const Dashboard = () => {
   const usersJson = localStorage.getItem('users');
   const users = usersJson ? JSON.parse(usersJson) : [];
   const residentUsers = users.filter(u => u.role === 'Resident');
@@ -53,8 +53,8 @@ const dashboard = () => {
   const occupationData = toData(countBy('occupation'), 'Occupational Distribution', ['#E94E77', '#50E3C2', '#9013FE', '#F8E71C']);
 
   return (
-    <div className={`${background['bg-1']} vh-100 py-5`}>
-      <div className="container">
+    <div className={`${background['bg-1']}`} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div className="container flex-grow-1 py-5">
         <h2 className="mb-4 fw-semibold text-center" style={{ color: '#222' }}>
           Barangay Mabalanoy — Resident Dashboard
         </h2>
@@ -139,7 +139,11 @@ const dashboard = () => {
                 ].map((row, i) => (
                   <tr
                     key={i}
-                    style={{ backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
+                    style={{
+                      backgroundColor: '#f9f9f9',
+                      borderRadius: '8px',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                    }}
                   >
                     <td className="text-center">{row.icon}</td>
                     <td className="fw-semibold" style={{ color: '#333' }}>{row.title}</td>
@@ -151,8 +155,9 @@ const dashboard = () => {
           </div>
         </section>
       </div>
+
     </div>
   );
 };
 
-export default dashboard;
+export default Dashboard;

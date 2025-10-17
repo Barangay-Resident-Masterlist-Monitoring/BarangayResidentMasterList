@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import ProfileView from "../components/ProfileView.jsx";
 import Register from '../components/Register.jsx'
+import ForgotPasswordModal from "../components/ForgotPassword.jsx";
 
 import Resident from "../resident/main.jsx";
 import ResidentLogin from "../resident/login.jsx";
@@ -23,6 +24,7 @@ const PageRouter = () => {
         <Route path="/resident/login" element={<ResidentLogin />} />
         <Route path="/secretary/login" element={<SecretaryLogin />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPasswordModal />} />
 
         <Route path="/resident" element={<Resident />}>
           <Route path="profile-view" element={<ProfileView />} />

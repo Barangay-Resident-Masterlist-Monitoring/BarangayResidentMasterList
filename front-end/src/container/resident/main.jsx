@@ -11,7 +11,7 @@ const main = () => {
       <Header />
       <SideBar />
       <MainContent />
-      <Footer style={{position: 'relative', bottom: '0', margin: '0', padding: '0' }}/>
+      <Footer/>
     </div>
   );
 };

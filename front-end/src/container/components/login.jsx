@@ -93,7 +93,7 @@ const login = ({ currentUserType }) => {
                 Remember me
               </label>
             </div>
-            <a href="#" className={`text-decoration-none ${loginCSS['forest-green-text']}`}>
+            <a href="/forgot-password" className={`text-decoration-none ${loginCSS['forest-green-text']}`}>
               Forgot password?
             </a>
           </div>

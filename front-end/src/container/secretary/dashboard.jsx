@@ -53,8 +53,8 @@ const dashboard = () => {
   const occupationData = toData(countBy('occupation'), 'Occupational Distribution', ['#E94E77', '#50E3C2', '#9013FE', '#F8E71C']);
 
   return (
-    <div className={`${background['bg-1']} vh-100 py-5`}>
-      <div className="container">
+    <div className={`${background['bg-1']}`} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div className="container flex-grow-1 py-5">
         <h2 className="mb-4 fw-semibold text-center" style={{ color: '#222' }}>
           Barangay Mabalanoy — Secretary Dashboard
         </h2>
