@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import loginCSS from '../css/login.module.css';
@@ -7,25 +7,36 @@ import useSweetAlert from '../hooks/useSweetAlert';
 const login = ({ currentUserType }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const navigate = useNavigate();
   const { fireSuccess, fireError } = useSweetAlert();
 
   const userType = currentUserType.toLowerCase();
 
-  const authenticate = (email, password) => {
+  // Updated authenticate function to include role checking
+  const authenticate = (email, password, role) => {
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    return users.some((user) => user.email === email && user.password === password);
+    return users.some(
+      (user) =>
+        user.email === email &&
+        user.password === password &&
+        user.role?.toLowerCase() === role
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (userType === 'resident' || userType === 'secretary') {
-      const isAuthenticated = authenticate(email, password);
+      const isAuthenticated = authenticate(email, password, userType);
 
       if (isAuthenticated) {
         const users = JSON.parse(localStorage.getItem('users')) || [];
-        const currentUser = users.find((user) => user.email === email);
+        const currentUser = users.find(
+          (user) =>
+            user.email === email &&
+            user.role?.toLowerCase() === userType
+        );
 
         if (currentUser) {
           localStorage.setItem('CurrentUserId', currentUser.id);
@@ -37,7 +48,7 @@ const login = ({ currentUserType }) => {
         fireSuccess('Login successful! Redirecting...');
         navigate(`/${userType}/dashboard`);
       } else {
-        fireError('Invalid credentials. Please try again.');
+        fireError('Invalid credentials or incorrect role. Please try again.');
       }
     }
   };
