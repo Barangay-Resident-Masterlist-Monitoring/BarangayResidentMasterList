@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import useSweetAlert from '../hooks/useSweetAlert';
 import styles from '../css/login.module.css';
 
 const RegisterResident = () => {
   const { fireSuccess, fireError } = useSweetAlert();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [residents, setResidents] = useState(() => {
     const stored = localStorage.getItem('users');

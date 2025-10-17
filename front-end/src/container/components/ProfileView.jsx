@@ -4,21 +4,24 @@ import background from '../css/login.module.css';
 
 const ProfileView = () => {
   const [user, setUser] = useState(null);
+  const [currentUserId] = useState(Number(localStorage.getItem('CurrentUserId')))
+  const [users] = useState(JSON.parse(localStorage.getItem('users'))[0]);
 
   useEffect(() => {
-    const stored = localStorage.getItem('users');
-    if (stored) {
-      const data = JSON.parse(stored);
-      if (Array.isArray(data) && data.length > 0) {
-        setUser(data[0]);
-      }
+    const stored = users.id === currentUserId ? users : null;
+      if (Object(stored) || stored.length > 0) {
+        setUser(stored);
     }
   }, []);
 
   if (!user) return null;
 
   return (
-    <div className={`bg- ${background['bg-1']} container vh-100 d-flex justify-content-center align-items-center`}>
+    <div 
+        className={`bg- ${background['bg-1']} container vh-100 align-items-center`} 
+        style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
+    >
+
       <div className={`card ${styles.profileCard} col-md-6 col-lg-4`}>
         <div className="text-center mb-4">
           <img
