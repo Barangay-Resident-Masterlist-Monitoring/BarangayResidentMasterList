@@ -13,14 +13,13 @@ const login = ({ currentUserType }) => {
 
   const userType = currentUserType.toLowerCase();
 
-  // Updated authenticate function to include role checking
-  const authenticate = (email, password, role) => {
+
+  const authenticate = (email, password) => {
     const users = JSON.parse(localStorage.getItem('users')) || [];
     return users.some(
       (user) =>
         user.email === email &&
-        user.password === password &&
-        user.role?.toLowerCase() === role
+        user.password === password 
     );
   };
 
@@ -34,8 +33,7 @@ const login = ({ currentUserType }) => {
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const currentUser = users.find(
           (user) =>
-            user.email === email &&
-            user.role?.toLowerCase() === userType
+            user.email === email 
         );
 
         if (currentUser) {
