@@ -14,12 +14,13 @@ const login = ({ currentUserType }) => {
   const userType = currentUserType.toLowerCase();
 
 
-  const authenticate = (email, password) => {
+  const authenticate = (email, password, role) => {
     const users = JSON.parse(localStorage.getItem('users')) || [];
     return users.some(
       (user) =>
         user.email === email &&
-        user.password === password 
+        user.password === password &&
+        user.role?.toLowerCase() === role
     );
   };
 
@@ -33,7 +34,8 @@ const login = ({ currentUserType }) => {
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const currentUser = users.find(
           (user) =>
-            user.email === email 
+            user.email === email &&
+            user.role?.toLowerCase() === userType
         );
 
         if (currentUser) {
